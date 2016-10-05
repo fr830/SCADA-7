@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="SCADA:war exploded">
+    <output-path>$PROJECT_DIR$/target/SCADA</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="SCADA" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.apache.poi:poi:3.14-beta1" />
+          <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.10" />
+          <element id="library" level="project" name="Maven: mysql:mysql-connector-java:5.1.36" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/SCADA/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="SCADA/web/Web" />
+    </root>
+  </artifact>
+</component>
