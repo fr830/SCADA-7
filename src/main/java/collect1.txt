@@ -30,11 +30,17 @@ Dim AI015_1         As Long
 
 '--------------------泄漏变量------------------------------------------------------
 Dim ATD_102     As Long
+Dim ATD_102_1     As Long
 Dim ATD_101     As Long
+Dim ATD_101_1     As Long
 Dim ATD_104     As Long
+Dim ATD_104_1    As Long
 Dim ATD_105     As Long
+Dim ATD_105_1     As Long
 Dim ATD_103     As Long
+Dim ATD_103_1     As Long
 Dim ATD_106     As Long
+Dim ATD_106_1     As Long
 
 
 '--------------------其他变量------------------------------------------------------
@@ -219,6 +225,67 @@ Function getFloatValue(hConnection As Long, ByVal area As Long, ByVal areaNumber
  End If
 
 End Function
+
+Function insertData()
+    'if HE109_T
+    ' 访问表tbl_data_anting
+    If isEqual = True Then
+
+    Else
+        sql = "insert into  tbl_data_anting(HE109_T,CP10A_T,CP10B_T,AI014,AI013,COMPRESSOR_P,CP10A_P,CP10B_P,T852_P ,T853_P ,AI016  ,AI015  ,ATD_102,ATD_101,ATD_104,ATD_105,ATD_103,ATD_106,AI011,AI05,AI29,AI30,AI08,AI028,AI01,AI020) values(" & HE109_T & "," & CP10A_T & "," & CP10B_T & "," & AI014 & "," & AI013 & "," & COMPRESSOR_P & "," & CP10A_P & "," & CP10B_P & "," & T852_P & "," & T853_P & "," & AI016 & "," & AI015 & "," & ATD_102 & "," & ATD_101 & "," & ATD_104 & "," & ATD_105 & "," & ATD_103 & "," & ATD_106 & "," & AI011 & "," & AI05 & "," & AI29 & "," & AI30 & "," & AI08 & "," & AI028 & "," & AI01 & "," & AI020 & ")" 'MsgBox rs.RecordCount
+        rs.Open sql, cn
+    End If
+End Function
+
+Function isEqual() As Boolean
+    If HE109_T = HE109_T_1 And CP10A_T = CP10A_T_1 And _
+        CP10B_T = CP10B_T_1 And AI014 = AI014_1 And _
+        AI013 = AI013_1 And COMPRESSOR_P = COMPRESSOR_P_1 And _
+        CP10A_P = CP10A_P_1 And CP10B_P = CP10B_P_1 And _
+        T852_P = T852_P_1 And T853_P = T853_P_1 And _
+        AI016 = AI016_1 And AI015 = AI015_1 And _
+        ATD_102 = ATD_102_1 And ATD_101 = ATD_101_1 And _
+        ATD_104 = ATD_104_1 And ATD_105 = ATD_105_1 And _
+        ATD_103 = ATD_103_1 And ATD_106 = ATD_106_1 And _
+        AI011 = AI011_1 And AI05 = AI05_1 And _
+        AI29 = AI29_1 And AI30 = AI30_1 And _
+        AI08 = AI08_1 And AI028 = AI028_1 And _
+        AI01 = AI01_1 And AI020 = AI020_1 Then
+
+        isEqual = True
+        Else
+            isEqual = False
+
+            HE109_T_1 = HE109_T
+            CP10B_T_1 = CP10B_T
+            AI013_1 = AI013
+            CP10A_P_1 = CP10A_P
+            T852_P_1 = T852_P
+            AI016_1 = AI016
+            ATD_102_1 = ATD_102
+            ATD_104_1 = ATD_104
+            ATD_103_1 = ATD_103
+            AI011_1 = AI011
+            AI29_1 = AI29
+            AI08_1 = AI08
+            AI01_1 = AI01
+            CP10A_T_1 = CP10A_T
+            AI014_1 = AI014
+            COMPRESSOR_P_1 = COMPRESSOR_P
+            CP10B_P_1 = CP10B_P
+            T853_P_1 = T853_P
+            AI015_1 = AI015
+            ATD_101_1 = ATD_101
+            ATD_105_1 = ATD_105
+            ATD_106_1 = ATD_106
+            AI05_1 = AI05
+            AI30_1 = AI30
+            AI028_1 = AI028
+            AI020_1 = AI020
+
+    End If
+End Function
+
 Private Sub Timer1_Timer()
 
     HE109_T = getFloatValue(hConnection, &H84, 26, 20, 4, 0, Text1)
@@ -247,9 +314,5 @@ Private Sub Timer1_Timer()
     AI028 = getFloatValue(hConnection, &H84, 27, 72, 4, 0, Text24)
     AI01 = getFloatValue(hConnection, &H84, 27, 0, 4, 0, Text25)
     AI020 = getFloatValue(hConnection, &H84, 27, 64, 4, 0, Text26)
-
-
-' 访问表tbl_data_anting
-sql = "insert into  tbl_data_anting(HE109_T,CP10A_T,CP10B_T,AI014,AI013,COMPRESSOR_P,CP10A_P,CP10B_P,T852_P ,T853_P ,AI016  ,AI015  ,ATD_102,ATD_101,ATD_104,ATD_105,ATD_103,ATD_106,AI011,AI05,AI29,AI30,AI08,AI028,AI01,AI020) values(" & HE109_T & "," & CP10A_T & "," & CP10B_T & "," & AI014 & "," & AI013 & "," & COMPRESSOR_P & "," & CP10A_P & "," & CP10B_P & "," & T852_P & "," & T853_P & "," & AI016 & "," & AI015 & "," & ATD_102 & "," & ATD_101 & "," & ATD_104 & "," & ATD_105 & "," & ATD_103 & "," & ATD_106 & "," & AI011 & "," & AI05 & "," & AI29 & "," & AI30 & "," & AI08 & "," & AI028 & "," & AI01 & "," & AI020 & ")" 'MsgBox rs.RecordCount
-rs.Open sql, cn
+    insertData
 End Sub
