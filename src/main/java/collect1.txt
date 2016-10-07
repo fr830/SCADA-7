@@ -1,0 +1,255 @@
+Option Explicit
+'--------------------温度变量------------------------------------------------------
+Dim HE109_T     As Long
+Dim HE109_T_1     As Long
+Dim CP10A_T     As Long
+Dim CP10A_T_1     As Long
+Dim CP10B_T     As Long
+Dim CP10B_T_1     As Long
+Dim AI014       As Long
+Dim AI014_1       As Long
+Dim AI013       As Long
+Dim AI013_1       As Long
+
+'--------------------压力变量------------------------------------------------------
+Dim COMPRESSOR_P  As Long
+Dim COMPRESSOR_P_1  As Long
+Dim CP10A_P       As Long
+Dim CP10A_P_1       As Long
+Dim CP10B_P       As Long
+Dim CP10B_P_1       As Long
+Dim T852_P        As Long
+Dim T852_P_1        As Long
+Dim T853_P        As Long
+Dim T853_P_1        As Long
+Dim AI016         As Long
+Dim AI016_1         As Long
+Dim AI015         As Long
+Dim AI015_1         As Long
+
+
+'--------------------泄漏变量------------------------------------------------------
+Dim ATD_102     As Long
+Dim ATD_101     As Long
+Dim ATD_104     As Long
+Dim ATD_105     As Long
+Dim ATD_103     As Long
+Dim ATD_106     As Long
+
+
+'--------------------其他变量------------------------------------------------------
+Dim AI011       As Long
+Dim AI011_1       As Long
+Dim AI05        As Long
+Dim AI05_1        As Long
+Dim AI29        As Long
+Dim AI29_1        As Long
+Dim AI30        As Long
+Dim AI30_1        As Long
+Dim AI08        As Long
+Dim AI08_1        As Long
+Dim AI028       As Long
+Dim AI028_1       As Long
+Dim AI01        As Long
+Dim AI01_1        As Long
+Dim AI020       As Long
+Dim AI020_1       As Long
+'定义并创建数据库连接和访问对象
+Dim cn As New ADODB.Connection
+Dim rs As New ADODB.Recordset
+'定义数据库连接字符串变量
+Dim strCn As String
+' 定义数据库连接参数变量
+Dim db_host As String
+Dim db_user As String
+Dim db_pass As String
+Dim db_data As String
+'定义 SQL 语句变量
+Dim sql As String
+' DEMO f黵 das Stellen und Lesen der SPS Uhr mittels libnodave
+' 31.07.2009 S.Brandes
+Private Const S7_IP As String = "192.168.2.30"  ' IP Adresse der S7 Steuerung, anpassen an die eigene Steuerung
+Private Declare Function openSocket Lib "libnodave.dll" (ByVal port As Long, ByVal peer As String) As Long
+Private Declare Function daveNewInterface Lib "libnodave.dll" (ByVal fd1 As Long, ByVal fd2 As Long, ByVal name As String, ByVal localMPI As Long, ByVal protocol As Long, ByVal speed As Long) As Long
+Private Declare Function daveInitAdapter Lib "libnodave.dll" (ByVal hInterface As Long) As Long
+Private Declare Function daveNewConnection Lib "libnodave.dll" (ByVal hInterface As Long, ByVal mpi As Long, ByVal Rack As Long, ByVal Slot As Long) As Long
+Private Declare Function daveConnectPLC Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveDisconnectPLC Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveDisconnectAdapter Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function closePort Lib "libnodave.dll" (ByVal fh As Long) As Long
+Private Declare Sub daveFree Lib "libnodave.dll" (ByVal Item As Long)
+Private Const daveProtoISOTCP = 122 '  ISO over TCP
+Private Const daveResOK = 0                        ' means all ok
+'' Read Clock time from PLC:
+''
+Private Declare Function daveReadPLCTime Lib "libnodave.dll" (ByVal dc As Long) As Long
+'' set clock to a value given by user
+Private Declare Function daveSetPLCTime Lib "libnodave.dll" (ByVal dc As Long, ByRef timestamp As Byte) As Long
+' set clock to PC system clock:
+Private Declare Function daveReadBytes Lib "libnodave.dll" (ByVal dc As Long, ByVal area As Long, ByVal areaNumber As Long, ByVal start As Long, ByVal numBytes As Long, ByVal buffer As Long) As Long
+Private Declare Function daveSetPLCTimeToSystime Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveGetAnswLen Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveGetU8 Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveGetS32 Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveGetFloat Lib "libnodave.dll" (ByVal dc As Long) As Single
+
+Private hSocket As Long                      ' handle von openSocket
+Private hInterface As Long                   ' handle von daveNewInterface
+Private hConnection As Long                  ' handle von daveNewConnection
+
+Private Type T_S7_PLCTime
+   Wochentag As Integer
+   Jahr As Integer
+   Tag As Integer
+   Monat As Integer
+   Stunden As Integer
+   Minuten As Integer
+   Sekunden As Integer
+   Millisekunden As Integer
+End Type
+Private Sub cmdConnect_Click()
+' Verbindung herstellen
+Dim RetCode As Long
+lblConnect.Caption = "connected to " & S7_IP & " ... failed!"   ' ... von Natur aus pessimistisch ;-)
+hSocket = openSocket(102, S7_IP)                               ' for ISO over TCP, siehe Doku zu libnodave
+If hSocket > 0 Then
+   hInterface = daveNewInterface(hSocket, hSocket, "IF1", 0, daveProtoISOTCP, 2)
+   RetCode = daveInitAdapter(hInterface)
+   If RetCode = daveResOK Then
+      hConnection = daveNewConnection(hInterface, 2, 0, 2)
+      RetCode = daveConnectPLC(hConnection)
+      If RetCode = daveResOK Then
+         lblConnect.Caption = "connected to " & S7_IP
+      End If
+      cmdConnect.Enabled = (RetCode <> 0)
+      cmdDisconnect.Enabled = (RetCode = 0)
+    End If
+End If
+End Sub
+Private Sub cmdDisconnect_Click()
+' Verbindung abbauen
+Dim RetCode As Long
+If hConnection <> 0 Then
+    RetCode = daveDisconnectPLC(hConnection)
+    daveFree hConnection
+    hConnection = 0
+End If
+If hInterface <> 0 Then
+    RetCode = daveDisconnectAdapter(hInterface)
+    daveFree hInterface
+    hInterface = 0
+End If
+If hSocket <> 0 Then
+    RetCode = closePort(hSocket)
+    hSocket = 0
+End If
+cmdConnect.Enabled = True
+cmdDisconnect.Enabled = False
+lblConnect.Caption = ""
+End Sub
+
+Private Sub Form_Load()
+cmdConnect.Enabled = True
+cmdDisconnect.Enabled = False
+Me.Caption = "Verbindung zu einer S7 mittels Ethernet und libnodave (IP:" & S7_IP & ")"
+' Verbindung herstellen
+Dim RetCode As Long
+lblConnect.Caption = "connected to " & S7_IP & " ... failed!"   ' ... von Natur aus pessimistisch ;-)
+hSocket = openSocket(102, S7_IP)                               ' for ISO over TCP, siehe Doku zu libnodave
+If hSocket > 0 Then
+   hInterface = daveNewInterface(hSocket, hSocket, "IF1", 0, daveProtoISOTCP, 2)
+   RetCode = daveInitAdapter(hInterface)
+   If RetCode = daveResOK Then
+      hConnection = daveNewConnection(hInterface, 2, 0, 2)
+      RetCode = daveConnectPLC(hConnection)
+      If RetCode = daveResOK Then
+         lblConnect.Caption = "connected to " & S7_IP
+         ' 初始化数据库连接变量
+            db_host = "120.24.179.161"
+            db_user = "root"
+            db_pass = "123456"
+            db_data = "test"
+
+            ' MySQL ODBC 连接参数
+            '+------------+---------------------+----------------------------------+
+            '| 参数名     | 默认值              | 说明                             |
+            '+------------+------------------------------------------------------–+
+            '| user       | ODBC (on Windows)   | MySQL 用户名                     |
+            '| server     | 120.24.179.161      | MySQL 服务器地址                 |
+            '| database   | test                | 默认连接数据库                   |
+            '| option     | 0                   | 参数用以指定连接的工作方式       |
+            '| port       | 3306                | 连接端口                         |
+            '| stmt       |                     | 一段声明, 可以在连接数据库后运行 |
+            '| password   |                     | MySQL 用户密码                   |
+            '| socket     |                     | (略)                             |
+            '+------------+---------------------+----------------------------------+
+
+            ' 详细查看官方说明
+            ' http://dev.mysql.com/doc/refman/5.0/en/myodbc-configuration-connection-parameters.html
+
+            strCn = "DRIVER={MySQL ODBC 5.1 Driver};" & _
+                     "SERVER=" & db_host & ";" & _
+                     "DATABASE=" & db_data & ";" & _
+                     "UID=" & db_user & ";PWD=" & db_pass & ";" & _
+                     "OPTION=3;stmt=SET NAMES GB2312"
+
+            ' stmt=SET NAMES GB2312
+            ' 这句是设置数据库编码方式
+            ' 中文操作系统需要设置成 GB2312
+            ' 这样中文才不会有问题
+            ' 版本要求 mysql 4.1+
+
+            ' 连接数据库
+            cn.Open strCn
+            ' 设置该属性, 使 recordcount 和 absolutepage 属性可用
+            cn.CursorLocation = adUseClient
+         Timer1.Interval = 5000
+      End If
+      cmdConnect.Enabled = (RetCode <> 0)
+      cmdDisconnect.Enabled = (RetCode = 0)
+    End If
+End If
+End Sub
+
+Function getFloatValue(hConnection As Long, ByVal area As Long, ByVal areaNumber As Long, ByVal start As Long, ByVal numBytes As Long, ByVal buffer As Long, ctr As Control) As Integer
+ getFloatValue = daveReadBytes(hConnection, area, areaNumber, start, numBytes, buffer)
+ If getFloatValue = 0 Then
+    getFloatValue = daveGetFloat(hConnection)
+    ctr.Text = getFloatValue
+ End If
+
+End Function
+Private Sub Timer1_Timer()
+
+    HE109_T = getFloatValue(hConnection, &H84, 26, 20, 4, 0, Text1)
+    CP10A_T = getFloatValue(hConnection, &H84, 26, 8, 4, 0, Text2)
+    CP10B_T = getFloatValue(hConnection, &H84, 26, 16, 4, 0, Text3)
+    AI014 = getFloatValue(hConnection, &H84, 27, 52, 4, 0, Text4)
+    AI013 = getFloatValue(hConnection, &H84, 27, 48, 4, 0, Text5)
+    COMPRESSOR_P = getFloatValue(hConnection, &H84, 26, 0, 4, 0, Text6)
+    CP10A_P = getFloatValue(hConnection, &H84, 26, 4, 4, 0, Text7)
+    CP10B_P = getFloatValue(hConnection, &H84, 26, 12, 4, 0, Text8)
+    T852_P = getFloatValue(hConnection, &H84, 26, 24, 4, 0, Text9)
+    T853_P = getFloatValue(hConnection, &H84, 26, 28, 4, 0, Text10)
+    AI016 = getFloatValue(hConnection, &H84, 27, 60, 4, 0, Text11)
+    AI015 = getFloatValue(hConnection, &H84, 27, 56, 4, 0, Text12)
+    ATD_102 = getFloatValue(hConnection, &H84, 24, 4, 4, 0, Text13)
+    ATD_101 = getFloatValue(hConnection, &H84, 24, 0, 4, 0, Text14)
+    ATD_104 = getFloatValue(hConnection, &H84, 24, 12, 4, 0, Text15)
+    ATD_105 = getFloatValue(hConnection, &H84, 24, 16, 4, 0, Text16)
+    ATD_103 = getFloatValue(hConnection, &H84, 24, 8, 4, 0, Text17)
+    ATD_106 = getFloatValue(hConnection, &H84, 24, 20, 4, 0, Text18)
+    AI011 = getFloatValue(hConnection, &H84, 27, 40, 4, 0, Text19)
+    AI05 = getFloatValue(hConnection, &H84, 27, 16, 4, 0, Text20)
+    AI29 = getFloatValue(hConnection, &H84, 27, 76, 4, 0, Text21)
+    AI30 = getFloatValue(hConnection, &H84, 27, 80, 4, 0, Text22)
+    AI08 = getFloatValue(hConnection, &H84, 27, 28, 4, 0, Text23)
+    AI028 = getFloatValue(hConnection, &H84, 27, 72, 4, 0, Text24)
+    AI01 = getFloatValue(hConnection, &H84, 27, 0, 4, 0, Text25)
+    AI020 = getFloatValue(hConnection, &H84, 27, 64, 4, 0, Text26)
+
+
+' 访问表tbl_data_anting
+sql = "insert into  tbl_data_anting(HE109_T,CP10A_T,CP10B_T,AI014,AI013,COMPRESSOR_P,CP10A_P,CP10B_P,T852_P ,T853_P ,AI016  ,AI015  ,ATD_102,ATD_101,ATD_104,ATD_105,ATD_103,ATD_106,AI011,AI05,AI29,AI30,AI08,AI028,AI01,AI020) values(" & HE109_T & "," & CP10A_T & "," & CP10B_T & "," & AI014 & "," & AI013 & "," & COMPRESSOR_P & "," & CP10A_P & "," & CP10B_P & "," & T852_P & "," & T853_P & "," & AI016 & "," & AI015 & "," & ATD_102 & "," & ATD_101 & "," & ATD_104 & "," & ATD_105 & "," & ATD_103 & "," & ATD_106 & "," & AI011 & "," & AI05 & "," & AI29 & "," & AI30 & "," & AI08 & "," & AI028 & "," & AI01 & "," & AI020 & ")" 'MsgBox rs.RecordCount
+rs.Open sql, cn
+End Sub
