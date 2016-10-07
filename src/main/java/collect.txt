@@ -1,0 +1,571 @@
+Option Explicit
+'--------------------温度变量------------------------------------------------------
+Dim HE109_T     As Long
+Dim HE109_T_1     As Long
+Dim CP10A_T     As Long
+Dim CP10A_T_1     As Long
+Dim CP10B_T     As Long
+Dim CP10B_T_1     As Long
+Dim AI014       As Long
+Dim AI014_1       As Long
+Dim AI013       As Long
+Dim AI013_1       As Long
+
+'--------------------压力变量------------------------------------------------------
+Dim COMPRESSOR_P  As Long
+Dim COMPRESSOR_P_1  As Long
+Dim CP10A_P       As Long
+Dim CP10A_P_1       As Long
+Dim CP10B_P       As Long
+Dim CP10B_P_1       As Long
+Dim T852_P        As Long
+Dim T852_P_1        As Long
+Dim T853_P        As Long
+Dim T853_P_1        As Long
+Dim AI016         As Long
+Dim AI016_1         As Long
+Dim AI015         As Long
+Dim AI015_1         As Long
+
+
+'--------------------泄漏变量------------------------------------------------------
+Dim ATD_102     As Long
+Dim ATD_101     As Long
+Dim ATD_104     As Long
+Dim ATD_105     As Long
+Dim ATD_103     As Long
+Dim ATD_106     As Long
+
+
+'--------------------其他变量------------------------------------------------------
+Dim AI011       As Long
+Dim AI011_1       As Long
+Dim AI05        As Long
+Dim AI05_1        As Long
+Dim AI29        As Long
+Dim AI29_1        As Long
+Dim AI30        As Long
+Dim AI30_1        As Long
+Dim AI08        As Long
+Dim AI08_1        As Long
+Dim AI028       As Long
+Dim AI028_1       As Long
+Dim AI01        As Long
+Dim AI01_1        As Long
+Dim AI020       As Long
+Dim AI020_1       As Long
+
+
+' 定义并创建数据库连接和访问对象
+Dim cn As New ADODB.Connection
+Dim rs As New ADODB.Recordset
+
+' 定义数据库连接字符串变量
+Dim strCn As String
+
+' 定义数据库连接参数变量
+Dim db_host As String
+Dim db_user As String
+Dim db_pass As String
+Dim db_data As String
+' 定义 SQL 语句变量
+Dim sql As String
+
+
+Dim I As Long
+
+' DEMO f黵 das Stellen und Lesen der SPS Uhr mittels libnodave
+' 31.07.2009 S.Brandes
+Private Const S7_IP As String = "192.168.2.30"  ' IP Adresse der S7 Steuerung, anpassen an die eigene Steuerung
+Private Declare Function openSocket Lib "libnodave.dll" (ByVal port As Long, ByVal peer As String) As Long
+Private Declare Function daveNewInterface Lib "libnodave.dll" (ByVal fd1 As Long, ByVal fd2 As Long, ByVal name As String, ByVal localMPI As Long, ByVal protocol As Long, ByVal speed As Long) As Long
+Private Declare Function daveInitAdapter Lib "libnodave.dll" (ByVal hInterface As Long) As Long
+Private Declare Function daveNewConnection Lib "libnodave.dll" (ByVal hInterface As Long, ByVal mpi As Long, ByVal Rack As Long, ByVal Slot As Long) As Long
+Private Declare Function daveConnectPLC Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveDisconnectPLC Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveDisconnectAdapter Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function closePort Lib "libnodave.dll" (ByVal fh As Long) As Long
+Private Declare Sub daveFree Lib "libnodave.dll" (ByVal Item As Long)
+Private Const daveProtoISOTCP = 122 '  ISO over TCP
+Private Const daveResOK = 0                        ' means all ok
+'' Read Clock time from PLC:
+
+
+''
+Private Declare Function daveReadPLCTime Lib "libnodave.dll" (ByVal dc As Long) As Long
+''
+'' set clock to a value given by user
+''
+Private Declare Function daveSetPLCTime Lib "libnodave.dll" (ByVal dc As Long, ByRef timestamp As Byte) As Long
+'
+''
+'' set clock to PC system clock:
+''
+Private Declare Function daveReadBytes Lib "libnodave.dll" (ByVal dc As Long, ByVal area As Long, ByVal areaNumber As Long, ByVal start As Long, ByVal numBytes As Long, ByVal buffer As Long) As Long
+'
+
+
+
+Private Declare Function daveSetPLCTimeToSystime Lib "libnodave.dll" (ByVal dc As Long) As Long
+Private Declare Function daveGetAnswLen Lib "libnodave.dll" (ByVal dc As Long) As Long
+'
+Private Declare Function daveGetU8 Lib "libnodave.dll" (ByVal dc As Long) As Long
+
+
+Private Declare Function daveGetS32 Lib "libnodave.dll" (ByVal dc As Long) As Long
+
+Private Declare Function daveGetFloat Lib "libnodave.dll" (ByVal dc As Long) As Single
+
+
+
+
+Private hSocket As Long                      ' handle von openSocket
+Private hInterface As Long                   ' handle von daveNewInterface
+Private hConnection As Long                  ' handle von daveNewConnection
+
+Private Type T_S7_PLCTime
+   Wochentag As Integer
+   Jahr As Integer
+   Tag As Integer
+   Monat As Integer
+   Stunden As Integer
+   Minuten As Integer
+   Sekunden As Integer
+   Millisekunden As Integer
+End Type
+Private Sub cmdConnect_Click()
+' Verbindung herstellen
+Dim RetCode As Long
+lblConnect.Caption = "connected to " & S7_IP & " ... failed!"   ' ... von Natur aus pessimistisch ;-)
+hSocket = openSocket(102, S7_IP)                               ' for ISO over TCP, siehe Doku zu libnodave
+If hSocket > 0 Then
+   hInterface = daveNewInterface(hSocket, hSocket, "IF1", 0, daveProtoISOTCP, 2)
+   RetCode = daveInitAdapter(hInterface)
+   If RetCode = daveResOK Then
+      hConnection = daveNewConnection(hInterface, 2, 0, 2)
+      RetCode = daveConnectPLC(hConnection)
+      If RetCode = daveResOK Then
+         lblConnect.Caption = "connected to " & S7_IP
+      End If
+      cmdConnect.Enabled = (RetCode <> 0)
+      cmdDisconnect.Enabled = (RetCode = 0)
+    End If
+End If
+End Sub
+Private Sub cmdDisconnect_Click()
+' Verbindung abbauen
+Dim RetCode As Long
+If hConnection <> 0 Then
+    RetCode = daveDisconnectPLC(hConnection)
+    daveFree hConnection
+    hConnection = 0
+End If
+If hInterface <> 0 Then
+    RetCode = daveDisconnectAdapter(hInterface)
+    daveFree hInterface
+    hInterface = 0
+End If
+If hSocket <> 0 Then
+    RetCode = closePort(hSocket)
+    hSocket = 0
+End If
+cmdConnect.Enabled = True
+cmdDisconnect.Enabled = False
+lblConnect.Caption = ""
+End Sub
+'Private Sub cmdReadTime_Click()
+'Dim RetCode As Long
+'Dim PLCTime As T_S7_PLCTime
+'RetCode = S7_ReadPLCTime(hConnection, PLCTime)
+'If RetCode <> daveResOK Then
+'   Debug.Print "S7_ReadPLCTime ... failed!"
+'   Exit Sub
+'End If
+'With PLCTime
+'   lblDate.Caption = "D#" & Format(.Jahr, "0000") & "-" & Format(.Monat, "00") & "-" & Format(.Tag, "00")
+'   lblTOD.Caption = "T#" & Format(.Stunden, "00") & "h" & Format(.Minuten, "00") & "m" & Format(.Sekunden, "00") & "s" & Format(.Millisekunden, "0") & "ms"
+'End With
+'End Sub
+'Private Sub cmdSetPLCToSystemTime_Click()
+'Dim RetCode
+'RetCode = S7_SetPLCToSystemTime(hConnection)
+'cmdReadTime_Click
+'End Sub
+'Private Sub cmdSetTime_Click()
+'Dim RetCode As Long
+'Dim PLCTime As T_S7_PLCTime
+'If MsgBox("Achtung, die Uhr der SPS Uhr wird auf das Jahr 2019 gestellt!", vbOKCancel, "SPS Uhr stellen") = vbOK Then
+'   RetCode = S7_ReadPLCTime(hConnection, PLCTime)
+'   PLCTime.Jahr = 2019     ' nur um die Funktion zu testen, wird das Datum auf 2019 gestellt
+'   RetCode = S7_SetPLCTime(hConnection, PLCTime)
+'   cmdReadTime_Click
+'End If
+'End Sub
+
+
+Private Sub Form_Load()
+cmdConnect.Enabled = True
+cmdDisconnect.Enabled = False
+Me.Caption = "Verbindung zu einer S7 mittels Ethernet und libnodave (IP:" & S7_IP & ")"
+
+
+' Verbindung herstellen
+
+Dim RetCode As Long
+lblConnect.Caption = "connected to " & S7_IP & " ... failed!"   ' ... von Natur aus pessimistisch ;-)
+hSocket = openSocket(102, S7_IP)                               ' for ISO over TCP, siehe Doku zu libnodave
+If hSocket > 0 Then
+   hInterface = daveNewInterface(hSocket, hSocket, "IF1", 0, daveProtoISOTCP, 2)
+   RetCode = daveInitAdapter(hInterface)
+   If RetCode = daveResOK Then
+      hConnection = daveNewConnection(hInterface, 2, 0, 2)
+      RetCode = daveConnectPLC(hConnection)
+      If RetCode = daveResOK Then
+         lblConnect.Caption = "connected to " & S7_IP
+         ' 初始化数据库连接变量
+            db_host = "120.24.179.161"
+            db_user = "root"
+            db_pass = "123456"
+            db_data = "test"
+
+            ' MySQL ODBC 连接参数
+            '+------------+---------------------+----------------------------------+
+            '| 参数名     | 默认值              | 说明                             |
+            '+------------+------------------------------------------------------–+
+            '| user       | ODBC (on Windows)   | MySQL 用户名                     |
+            '| server     | 120.24.179.161      | MySQL 服务器地址                 |
+            '| database   | test                | 默认连接数据库                   |
+            '| option     | 0                   | 参数用以指定连接的工作方式       |
+            '| port       | 3306                | 连接端口                         |
+            '| stmt       |                     | 一段声明, 可以在连接数据库后运行 |
+            '| password   |                     | MySQL 用户密码                   |
+            '| socket     |                     | (略)                             |
+            '+------------+---------------------+----------------------------------+
+
+            ' 详细查看官方说明
+            ' http://dev.mysql.com/doc/refman/5.0/en/myodbc-configuration-connection-parameters.html
+
+            strCn = "DRIVER={MySQL ODBC 5.1 Driver};" & _
+                     "SERVER=" & db_host & ";" & _
+                     "DATABASE=" & db_data & ";" & _
+                     "UID=" & db_user & ";PWD=" & db_pass & ";" & _
+                     "OPTION=3;stmt=SET NAMES GB2312"
+
+            ' stmt=SET NAMES GB2312
+            ' 这句是设置数据库编码方式
+            ' 中文操作系统需要设置成 GB2312
+            ' 这样中文才不会有问题
+            ' 版本要求 mysql 4.1+
+
+            ' 连接数据库
+            cn.Open strCn
+            ' 设置该属性, 使 recordcount 和 absolutepage 属性可用
+            cn.CursorLocation = adUseClient
+         Timer1.Interval = 5000
+      End If
+      cmdConnect.Enabled = (RetCode <> 0)
+      cmdDisconnect.Enabled = (RetCode = 0)
+    End If
+End If
+End Sub
+'Private Function S7_ReadPLCTime(hConnection As Long, PLCTime As T_S7_PLCTime, Optional TimeAsByte As Variant) As Long
+'Dim bByte(0 To 9) As Byte
+'Dim iHelper As Integer
+'Dim count As Long, Length As Long, RetCode As Long
+'RetCode = daveReadPLCTime(hConnection)
+'If RetCode <> daveResOK Then
+'   S7_ReadPLCTime = RetCode
+'   Debug.Print "S7_ReadPLCTime ... failed!"
+'   Exit Function
+'End If
+'Length = daveGetAnswLen(hConnection)
+'If Length < 10 Then
+'   S7_ReadPLCTime = &H8001
+'   Debug.Print "S7_ReadPLCTime ... failed (not enough data)!"
+'   Exit Function
+'End If
+'If Length > (UBound(bByte) + 1) Then Length = (UBound(bByte) + 1)
+'If Not IsMissing(TimeAsByte) Then
+'   ReDim TimeAsByte(0 To 9)
+'End If
+'For count = 0 To Length - 1
+'   If Not IsMissing(TimeAsByte) Then
+'      TimeAsByte(count) = daveGetU8(hConnection)
+'      bByte(count) = Hex(TimeAsByte(count))
+'   Else
+'      bByte(count) = Hex(daveGetU8(hConnection))
+'   End If
+'Next count
+'With PLCTime
+'   .Jahr = 2000 + CInt(bByte(2))
+'   ' siehe auch Beschreibung DATE_AND_TIME in der SIEMENS Online Hilfe
+'   If .Jahr >= 90 And .Jahr <= 99 Then
+'     .Jahr = .Jahr - 100
+'   End If
+'   .Monat = CInt(bByte(3))
+'   .Tag = CInt(bByte(4))
+'   .Stunden = CInt(bByte(5))
+'   .Minuten = CInt(bByte(6))
+'   .Sekunden = CInt(bByte(7))
+'   iHelper = (CInt(bByte(9)) + CInt(bByte(8)) * CInt(100))
+'   .Wochentag = iHelper Mod 10
+'   .Millisekunden = iHelper \ 10
+'End With
+'S7_ReadPLCTime = daveResOK
+'End Function
+'Private Function S7_SetPLCToSystemTime(hConnection As Long) As Long
+'Dim RetCode As Long
+'RetCode = daveSetPLCTimeToSystime(hConnection)
+'End Function
+'Private Function S7_SetPLCTime(hConnection As Long, PLCTime As T_S7_PLCTime) As Long
+'Dim bByte(0 To 9) As Byte
+'Dim RetCode As Long
+'With PLCTime
+'   If .Jahr < 1990 Or .Jahr > 2089 Then
+'      S7_SetPLCTime = &H8001
+'      Debug.Print "S7_SetPLCTime ... failed (year is out of range)!"
+'      Exit Function
+'   End If
+'   If .Monat < 1 Or .Monat > 12 Then
+'      S7_SetPLCTime = &H8002
+'      Debug.Print "S7_SetPLCTime ... failed (month is out of range)!"
+'      Exit Function
+'   End If
+'   If .Tag < 1 Or .Tag > 31 Then
+'      S7_SetPLCTime = &H8003
+'      Debug.Print "S7_SetPLCTime ... failed (day is out of range)!"
+'      Exit Function
+'   End If
+'   If .Stunden < 0 Or .Stunden > 23 Then
+'      S7_SetPLCTime = &H8004
+'      Debug.Print "S7_SetPLCTime ... failed (hour is out of range)!"
+'      Exit Function
+'   End If
+'   If .Minuten < 0 Or .Minuten > 59 Then
+'      S7_SetPLCTime = &H8005
+'      Debug.Print "S7_SetPLCTime ... failed (minute is out of range)!"
+'      Exit Function
+'   End If
+'   If .Sekunden < 0 Or .Sekunden > 59 Then
+'      S7_SetPLCTime = &H8006
+'      Debug.Print "S7_SetPLCTime ... failed (second is out of range)!"
+'      Exit Function
+'   End If
+'   If .Millisekunden < 0 Or .Millisekunden > 999 Then
+'      S7_SetPLCTime = &H8007
+'      Debug.Print "S7_SetPLCTime ... failed (millisecond is out of range)!"
+'      Exit Function
+'   End If
+'   If .Wochentag < 1 Or .Wochentag > 7 Then
+'      S7_SetPLCTime = &H8008
+'      Debug.Print "S7_SetPLCTime ... failed (weekday is out of range)!"
+'      Exit Function
+'   End If
+'   bByte(1) = &H19
+'   If .Jahr < 2000 Then
+'      bByte(2) = CByte("&h" & (.Jahr - 1990))
+'   Else
+'      bByte(2) = CByte("&h" & (.Jahr - 2000))
+'   End If
+'   bByte(3) = CByte("&h" & .Monat)
+'   bByte(4) = CByte("&h" & .Tag)
+'   bByte(5) = CByte("&h" & .Stunden)
+'   bByte(6) = CByte("&h" & .Minuten)
+'   bByte(7) = CByte("&h" & .Sekunden)
+'   bByte(8) = CByte("&h" & (.Millisekunden \ 10))
+'   bByte(9) = CByte("&h" & (.Millisekunden Mod 10) * 10 + .Wochentag)
+'End With
+'RetCode = daveSetPLCTime(hConnection, bByte(0))
+'If RetCode <> 10 Then
+'   S7_SetPLCTime = RetCode
+'   Debug.Print "S7_SetPLCTime ... failed!"
+'   Exit Function
+'End If
+'S7_SetPLCTime = daveResOK
+'End Function
+Function getFloatValue(hConnection As Long, ByVal area As Long, ByVal areaNumber As Long, ByVal start As Long, ByVal numBytes As Long, ByVal buffer As Long, ctr As Control) As Integer
+ getFloatValue = daveReadBytes(hConnection, area, areaNumber, start, numBytes, buffer)
+ If getFloatValue = 0 Then
+    getFloatValue = daveGetFloat(hConnection)
+    ctr.Text = getFloatValue
+ End If
+
+End Function
+Private Sub Timer1_Timer()
+
+'HE109_T = daveReadBytes(hConnection, &H84, 26, 20, 4, 0)
+'If HE109_T = 0 Then
+'     HE109_T = daveGetFloat(hConnection)
+'     Text1.Text = HE109_T
+'End If
+'
+'CP10A_T = daveReadBytes(hConnection, &H84, 26, 8, 4, 0)
+'If CP10A_T = 0 Then
+'     CP10A_T = daveGetFloat(hConnection)
+'     Text2.Text = CP10A_T
+'End If
+'
+'CP10B_T = daveReadBytes(hConnection, &H84, 26, 16, 4, 0)
+'If CP10B_T = 0 Then
+'     CP10B_T = daveGetFloat(hConnection)
+'     Text3.Text = CP10B_T
+'End If
+'
+'AI014 = daveReadBytes(hConnection, &H84, 27, 52, 4, 0)
+'If AI014 = 0 Then
+'    AI014 = daveGetFloat(hConnection)
+'    Text4.Text = AI014
+'End If
+'
+'AI013 = daveReadBytes(hConnection, &H84, 27, 48, 4, 0)
+'If AI013 = 0 Then
+'     AI013 = daveGetFloat(hConnection)
+'     Text5.Text = AI013
+'End If
+'
+'COMPRESSOR_P = daveReadBytes(hConnection, &H84, 26, 0, 4, 0)
+'If COMPRESSOR_P = 0 Then
+'     COMPRESSOR_P = daveGetFloat(hConnection)
+'     Text6.Text = COMPRESSOR_P
+'End If
+'
+'CP10A_P = daveReadBytes(hConnection, &H84, 26, 4, 4, 0)
+'If CP10A_P = 0 Then
+'    CP10A_P = daveGetFloat(hConnection)
+'    Text7.Text = CP10A_P
+'End If
+'
+'CP10B_P = daveReadBytes(hConnection, &H84, 26, 12, 4, 0)
+'If CP10B_P = 0 Then
+'    CP10B_P = daveGetFloat(hConnection)
+'    Text8.Text = CP10B_P
+'End If
+'
+'T852_P = daveReadBytes(hConnection, &H84, 26, 24, 4, 0)
+'If T852_P = 0 Then
+'    T852_P = daveGetFloat(hConnection)
+'    Text9.Text = T852_P
+'End If
+'T853_P = daveReadBytes(hConnection, &H84, 26, 28, 4, 0)
+'If T853_P = 0 Then
+'    T853_P = daveGetFloat(hConnection)
+'    Text10.Text = T853_P
+'End If
+'
+'AI016 = daveReadBytes(hConnection, &H84, 27, 60, 4, 0)
+'If AI016 = 0 Then
+'    AI016 = daveGetFloat(hConnection)
+'    Text11.Text = AI016
+'End If
+'AI015 = daveReadBytes(hConnection, &H84, 27, 56, 4, 0)
+'If AI015 = 0 Then
+'    AI015 = daveGetFloat(hConnection)
+'    Text12.Text = AI015
+'End If
+'ATD_102 = daveReadBytes(hConnection, &H84, 24, 4, 4, 0)
+'If ATD_102 = 0 Then
+'     ATD_102 = daveGetFloat(hConnection)
+'     Text13.Text = ATD_102
+'End If
+'ATD_101 = daveReadBytes(hConnection, &H84, 24, 0, 4, 0)
+'If ATD_101 = 0 Then
+'     ATD_101 = daveGetFloat(hConnection)
+'     Text14.Text = ATD_101
+'End If
+'ATD_104 = daveReadBytes(hConnection, &H84, 24, 12, 4, 0)
+'If ATD_104 = 0 Then
+'     ATD_104 = daveGetFloat(hConnection)
+'     Text15.Text = ATD_104
+'End If
+'
+'ATD_105 = daveReadBytes(hConnection, &H84, 24, 16, 4, 0)
+'If ATD_105 = 0 Then
+'     ATD_105 = daveGetFloat(hConnection)
+'     Text16.Text = ATD_105
+'End If
+'
+'ATD_103 = daveReadBytes(hConnection, &H84, 24, 8, 4, 0)
+'If ATD_103 = 0 Then
+'    ATD_103 = daveGetFloat(hConnection)
+'    Text17.Text = ATD_103
+'End If
+'
+'ATD_106 = daveReadBytes(hConnection, &H84, 24, 20, 4, 0)
+'If ATD_106 = 0 Then
+'     ATD_106 = daveGetFloat(hConnection)
+'     Text18.Text = ATD_106
+'End If
+'AI011 = daveReadBytes(hConnection, &H84, 27, 40, 4, 0)
+'If AI011 = 0 Then
+'     AI011 = daveGetFloat(hConnection)
+'     Text19.Text = AI011
+'End If
+'AI05 = daveReadBytes(hConnection, &H84, 27, 16, 4, 0)
+'If AI05 = 0 Then
+'     AI05 = daveGetFloat(hConnection)
+'     Text20.Text = AI05
+'End If
+'
+'AI29 = daveReadBytes(hConnection, &H84, 27, 76, 4, 0)
+'If AI29 = 0 Then
+'     AI29 = daveGetFloat(hConnection)
+'     Text21.Text = AI29
+'End If
+'AI30 = daveReadBytes(hConnection, &H84, 27, 80, 4, 0)
+'If AI30 = 0 Then
+'     AI30 = daveGetFloat(hConnection)
+'     Text22.Text = AI30
+'End If
+'AI08 = daveReadBytes(hConnection, &H84, 27, 28, 4, 0)
+'If AI08 = 0 Then
+'     AI08 = daveGetFloat(hConnection)
+'     Text23.Text = AI08
+'End If
+'AI028 = daveReadBytes(hConnection, &H84, 27, 72, 4, 0)
+'If AI028 = 0 Then
+'     AI028 = daveGetFloat(hConnection)
+'     Text24.Text = AI028
+'End If
+'AI01 = daveReadBytes(hConnection, &H84, 27, 0, 4, 0)
+'If AI01 = 0 Then
+'     AI01 = daveGetFloat(hConnection)
+'     Text25.Text = AI01
+'End If
+'AI020 = daveReadBytes(hConnection, &H84, 27, 64, 4, 0)
+'If AI020 = 0 Then
+'     AI020 = daveGetFloat(hConnection)
+'     Text26.Text = AI020
+'End If
+
+    HE109_T = getFloatValue(hConnection, &H84, 26, 20, 4, 0, Text1)
+    CP10A_T = getFloatValue(hConnection, &H84, 26, 8, 4, 0, Text2)
+    CP10B_T = getFloatValue(hConnection, &H84, 26, 16, 4, 0, Text3)
+    AI014 = getFloatValue(hConnection, &H84, 27, 52, 4, 0, Text4)
+    AI013 = getFloatValue(hConnection, &H84, 27, 48, 4, 0, Text5)
+    COMPRESSOR_P = getFloatValue(hConnection, &H84, 26, 0, 4, 0, Text6)
+    CP10A_P = getFloatValue(hConnection, &H84, 26, 4, 4, 0, Text7)
+    CP10B_P = getFloatValue(hConnection, &H84, 26, 12, 4, 0, Text8)
+    T852_P = getFloatValue(hConnection, &H84, 26, 24, 4, 0, Text9)
+    T853_P = getFloatValue(hConnection, &H84, 26, 28, 4, 0, Text10)
+    AI016 = getFloatValue(hConnection, &H84, 27, 60, 4, 0, Text11)
+    AI015 = getFloatValue(hConnection, &H84, 27, 56, 4, 0, Text12)
+    ATD_102 = getFloatValue(hConnection, &H84, 24, 4, 4, 0, Text13)
+    ATD_101 = getFloatValue(hConnection, &H84, 24, 0, 4, 0, Text14)
+    ATD_104 = getFloatValue(hConnection, &H84, 24, 12, 4, 0, Text15)
+    ATD_105 = getFloatValue(hConnection, &H84, 24, 16, 4, 0, Text16)
+    ATD_103 = getFloatValue(hConnection, &H84, 24, 8, 4, 0, Text17)
+    ATD_106 = getFloatValue(hConnection, &H84, 24, 20, 4, 0, Text18)
+    AI011 = getFloatValue(hConnection, &H84, 27, 40, 4, 0, Text19)
+    AI05 = getFloatValue(hConnection, &H84, 27, 16, 4, 0, Text20)
+    AI29 = getFloatValue(hConnection, &H84, 27, 76, 4, 0, Text21)
+    AI30 = getFloatValue(hConnection, &H84, 27, 80, 4, 0, Text22)
+    AI08 = getFloatValue(hConnection, &H84, 27, 28, 4, 0, Text23)
+    AI028 = getFloatValue(hConnection, &H84, 27, 72, 4, 0, Text24)
+    AI01 = getFloatValue(hConnection, &H84, 27, 0, 4, 0, Text25)
+    AI020 = getFloatValue(hConnection, &H84, 27, 64, 4, 0, Text26)
+
+
+' 访问表tbl_data_anting
+sql = "insert into  tbl_data_anting(HE109_T,CP10A_T,CP10B_T,AI014,AI013,COMPRESSOR_P,CP10A_P,CP10B_P,T852_P ,T853_P ,AI016  ,AI015  ,ATD_102,ATD_101,ATD_104,ATD_105,ATD_103,ATD_106,AI011,AI05,AI29,AI30,AI08,AI028,AI01,AI020) values(" & HE109_T & "," & CP10A_T & "," & CP10B_T & "," & AI014 & "," & AI013 & "," & COMPRESSOR_P & "," & CP10A_P & "," & CP10B_P & "," & T852_P & "," & T853_P & "," & AI016 & "," & AI015 & "," & ATD_102 & "," & ATD_101 & "," & ATD_104 & "," & ATD_105 & "," & ATD_103 & "," & ATD_106 & "," & AI011 & "," & AI05 & "," & AI29 & "," & AI30 & "," & AI08 & "," & AI028 & "," & AI01 & "," & AI020 & ")" 'MsgBox rs.RecordCount
+rs.Open sql, cn
+End Sub
