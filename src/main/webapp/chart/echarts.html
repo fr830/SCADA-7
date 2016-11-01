@@ -16,6 +16,14 @@
         }
     });
 
+    var date7=GetDateStr(-7);
+    var date6=GetDateStr(-6);
+    var date5=GetDateStr(-5);
+    var date4=GetDateStr(-4);
+    var date3=GetDateStr(-3);
+    var date2=GetDateStr(-2);
+    var date1=GetDateStr(-1);
+
     // 使用
     require(
             [
@@ -31,12 +39,12 @@
                         show: true
                     },
                     legend: {
-                        data:['销量']
+                        data:['最近一周加氢量统计']
                     },
                     xAxis : [
                         {
                             type : 'category',
-                            data : ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                            data : [date7,date6,date5,date6,date3,date2,date1]
                         }
                     ],
                     yAxis : [
@@ -46,9 +54,9 @@
                     ],
                     series : [
                         {
-                            "name":"销量",
+                            "name":"加氢量",
                             "type":"bar",
-                            "data":[5, 20, 40, 10, 10, 20]
+                            "data":[5, 20, 40, 10, 10, 20,1]
                         }
                     ]
                 };
@@ -57,5 +65,14 @@
                 myChart.setOption(option);
             }
     );
+
+    function GetDateStr(AddDayCount){
+        var dd = new Date();
+        dd.setDate(dd.getDate()+AddDayCount);//获取AddDayCount天后的日期
+        var y = dd.getFullYear();
+        var m = (dd.getMonth()+1)<10?"0"+(dd.getMonth()+1):(dd.getMonth()+1);//获取当前月份的日期，不足10补0
+        var d = dd.getDate()<10?"0"+dd.getDate():dd.getDate(); //获取当前几号，不足10补0
+        return y+"-"+m+"-"+d;
+    }
 </script>
 </body>
