@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: siege
+  Date: 2016-11-01
+  Time: 23:20
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <!--[if IE 8]>
@@ -195,8 +202,7 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="row-fluid">
-                    <img src="media/image/station.png" id="station_img">
-                    <canvas id="mycanvas">Your browser does not support the HTML5 canvas tag.</canvas>
+                    <div id="main" style="height:400px"></div>
                 </div>
             </div>
         </div>
@@ -217,58 +223,88 @@
 <script src="media/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
 <script src="media/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="media/js/app.js" type="text/javascript"></script>
+<script src="jslib/js/echarts.js"></script>
 <script>
-    function showData() {
-        $.ajax({
-            url: '../GetDataServlet',
-            type: 'POST',
-            'success': function (data) {
-                var dataJson = jQuery.parseJSON(data);
-                var dataArray = dataJson.data;
-                var canvas = document.getElementById("mycanvas");
-                var img = document.getElementById("station_img");
-                canvas.width = img.width;
-                canvas.height = img.height;
-                var context = canvas.getContext("2d");
-                context.scale(0.71, 0.71);
-                context.drawImage(img, 0, 0);
-                context.font = "23px Microsoft YaHei";
-                context.fillText(dataArray["ATD_102"] + "%", 300, 40);
-                context.fillText(dataArray["ATD_101"] + "%", 300, 100);
-                context.fillText(dataArray["COMPRESSOR_P"] + " Bar", 530, 90);
-                context.fillText(dataArray["CP10A_P"] + " Bar", 710, 150);
-                context.fillText(dataArray["CP10A_T"] + " ℃", 780, 240);
-                context.fillText(dataArray["T852_P"] + " Bar", 880, 240);
-                context.fillText(dataArray["T853_P"] + " Bar", 880, 430);
-                context.fillText(dataArray["CP10B_T"] + " ℃", 800, 430);
-                context.fillText(dataArray["CP10B_P"] + " Bar", 720, 435);
-                context.fillText(dataArray["ATD_105"] + "% ", 710, 510);
-                context.fillText(dataArray["ATD_103"] + "% ", 1090, 90);
-                context.fillText(dataArray["HE109_T"] + "℃", 100, 270);
-                context.fillText(dataArray["AI014"] + "℃", 980, 480);
-                context.fillText(dataArray["AI016"] + "MPa", 1050, 480);
-                context.fillText(dataArray["AI011"] + "KG/MIN ", 1140, 480);
-                context.fillText(dataArray["AI013"] + "℃", 970, 580);
-                context.fillText(dataArray["AI015"] + "MPa", 1040, 580);
-                context.fillText(dataArray["AI05"] + "KG/MIN ", 1130, 620);
-                $("#station_img").css('display', 'none');
-            },
-            'error': function (data) {
-
-            }
-        });
-
-
-    }
-
     jQuery(document).ready(function () {
-        showData();
         App.init(); // initlayout and core plugins
     });
-    var i = 0
-    setInterval(function () {
-        showData();
-    }, 5000)
+    var myChart = echarts.init(document.getElementById('main'));
+
+    var app = {};
+    option = null;
+    function randomData() {
+        now = new Date(+now + oneDay);
+        value = value + Math.random() * 21 - 10;
+        return {
+            name: now.toString(),
+            value: [
+                [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+                Math.round(value)
+            ]
+        }
+    }
+
+    var data = [];
+    var now = +new Date(1997, 9, 3);
+    var oneDay = 24 * 3600 * 1000;
+    var value = Math.random() * 1000;
+    for (var i = 0; i < 1000; i++) {
+        data.push(randomData());
+    }
+
+    option = {
+        title: {
+            text: '动态数据 + 时间坐标轴'
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+                params = params[0];
+                var date = new Date(params.name);
+                return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+            },
+            axisPointer: {
+                animation: false
+            }
+        },
+        xAxis: {
+            type: 'time',
+            splitLine: {
+                show: false
+            }
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%'],
+            splitLine: {
+                show: false
+            }
+        },
+        series: [{
+            name: '模拟数据',
+            type: 'line',
+            showSymbol: false,
+            hoverAnimation: false,
+            data: data
+        }]
+    };
+
+    app.timeTicket = setInterval(function () {
+
+        for (var i = 0; i < 5; i++) {
+            data.shift();
+            data.push(randomData());
+        }
+
+        myChart.setOption({
+            series: [{
+                data: data
+            }]
+        });
+    }, 1000);;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
 </script>
 </body>
 </html>

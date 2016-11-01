@@ -91,6 +91,10 @@
                         <a href="report.jsp">
                             报表查看</a>
                     </li>
+                    <li>
+                        <a href="amountdata.jsp">
+                            加氢量统计</a>
+                    </li>
                 </ul>
             </li>
             <li class="start">
@@ -185,27 +189,11 @@
                         <div class="dashboard-stat yellow"></div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
-                <div class="row-fluid">
-                    <img src="media/image/station.png" id="station_img">
-                    <canvas id="mycanvas">Your browser does not support the HTML5 canvas tag.</canvas>
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="portlet solid bordered light-grey">
-                            <div class="portlet-title">
-                                <div class="caption"><i class="icon-bar-chart"></i>Site Visits</div>
-                            </div>
-                            <div class="portlet-body">
-                                <div id="site_statistics_loading">
-                                    <img src="media/image/loading.gif" alt="loading"/>
-                                </div>
-                                <div id="site_statistics_content" class="hide">
-                                    <div id="site_statistics" class="chart"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="row-fluid">
+                <img src="media/image/station.png" id="station_img">
+                <canvas id="mycanvas">Your browser does not support the HTML5 canvas tag.</canvas>
             </div>
         </div>
     </div>
@@ -226,13 +214,13 @@
 <script src="media/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="media/js/app.js" type="text/javascript"></script>
 <script>
-    function showData(){
+    function showData() {
         $.ajax({
-            url:'../GetDataServlet',
-            type:'POST',
-            'success':function(data){
-                var dataJson=jQuery.parseJSON(data);
-                var dataArray=dataJson.data;
+            url: '../GetDataServlet',
+            type: 'POST',
+            'success': function (data) {
+                var dataJson = jQuery.parseJSON(data);
+                var dataArray = dataJson.data;
                 var canvas = document.getElementById("mycanvas");
                 var img = document.getElementById("station_img");
                 canvas.width = img.width;
@@ -241,31 +229,30 @@
                 context.scale(0.71, 0.71);
                 context.drawImage(img, 0, 0);
                 context.font = "23px Microsoft YaHei";
-                context.fillText(dataArray["ATD_102"]+"%", 300, 40);
-                context.fillText(dataArray["ATD_101"]+"%", 300, 100);
-                context.fillText(dataArray["COMPRESSOR_P"]+" Bar", 530, 90);
-                context.fillText(dataArray["CP10A_P"]+" Bar", 710, 150);
-                context.fillText(dataArray["CP10A_T"]+" ℃", 780, 240);
-                context.fillText(dataArray["T852_P"]+" Bar", 880, 240);
-                context.fillText(dataArray["T853_P"]+" Bar", 880, 430);
-                context.fillText(dataArray["CP10B_T"]+" ℃", 800, 430);
-                context.fillText(dataArray["CP10B_P"]+" Bar", 720, 435);
-                context.fillText(dataArray["ATD_105"]+"% ", 710, 510);
-                context.fillText(dataArray["ATD_103"]+"% ", 1090, 90);
-                context.fillText(dataArray["HE109_T"]+"℃", 100, 270);
-                context.fillText(dataArray["AI014"]+"℃", 980, 480);
-                context.fillText(dataArray["AI016"]+"MPa", 1050, 480);
-                context.fillText(dataArray["AI011"]+"KG/MIN ", 1140, 480);
-                context.fillText(dataArray["AI013"]+"℃", 970, 580);
-                context.fillText(dataArray["AI015"]+"MPa", 1040, 580);
-                context.fillText(dataArray["AI05"]+"KG/MIN ", 1130, 620);
+                context.fillText(dataArray["ATD_102"] + "%", 300, 40);
+                context.fillText(dataArray["ATD_101"] + "%", 300, 100);
+                context.fillText(dataArray["COMPRESSOR_P"] + " Bar", 530, 90);
+                context.fillText(dataArray["CP10A_P"] + " Bar", 710, 150);
+                context.fillText(dataArray["CP10A_T"] + " ℃", 780, 240);
+                context.fillText(dataArray["T852_P"] + " Bar", 880, 240);
+                context.fillText(dataArray["T853_P"] + " Bar", 880, 430);
+                context.fillText(dataArray["CP10B_T"] + " ℃", 800, 430);
+                context.fillText(dataArray["CP10B_P"] + " Bar", 720, 435);
+                context.fillText(dataArray["ATD_105"] + "% ", 710, 510);
+                context.fillText(dataArray["ATD_103"] + "% ", 1090, 90);
+                context.fillText(dataArray["HE109_T"] + "℃", 100, 270);
+                context.fillText(dataArray["AI014"] + "℃", 980, 480);
+                context.fillText(dataArray["AI016"] + "MPa", 1050, 480);
+                context.fillText(dataArray["AI011"] + "KG/MIN ", 1140, 480);
+                context.fillText(dataArray["AI013"] + "℃", 970, 580);
+                context.fillText(dataArray["AI015"] + "MPa", 1040, 580);
+                context.fillText(dataArray["AI05"] + "KG/MIN ", 1130, 620);
                 $("#station_img").css('display', 'none');
             },
-            'error':function(data){
+            'error': function (data) {
 
             }
         });
-
 
 
     }
@@ -274,10 +261,10 @@
         showData();
         App.init(); // initlayout and core plugins
     });
-    var i=0
-    setInterval(function(){
+    var i = 0
+    setInterval(function () {
         showData();
-    },5000)
+    }, 5000)
 </script>
 </body>
 </html>
