@@ -7,15 +7,9 @@
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 <div id="main" style="height:400px"></div>
 <!-- ECharts单文件引入 -->
-<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+<script src="../pages/jslib/js/echarts.min.js"></script>
+<script src="../pages/jslib/js/jquery-1.11.2.js"></script>
 <script type="text/javascript">
-    // 路径配置
-    require.config({
-        paths: {
-            echarts: 'http://echarts.baidu.com/build/dist'
-        }
-    });
-
     var date7=GetDateStr(-7);
     var date6=GetDateStr(-6);
     var date5=GetDateStr(-5);
@@ -23,48 +17,60 @@
     var date3=GetDateStr(-3);
     var date2=GetDateStr(-2);
     var date1=GetDateStr(-1);
+    var dates=[date7,date6,date5,date4,date3,date2,date1];
 
-    // 使用
-    require(
-            [
-                'echarts',
-                'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
-            ],
-            function (ec) {
-                // 基于准备好的dom，初始化echarts图表
-                var myChart = ec.init(document.getElementById('main'));
-
-                var option = {
-                    tooltip: {
-                        show: true
-                    },
-                    legend: {
-                        data:['最近一周加氢量统计']
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            data : [date7,date6,date5,date6,date3,date2,date1]
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value'
-                        }
-                    ],
-                    series : [
-                        {
-                            "name":"加氢量",
-                            "type":"bar",
-                            "data":[5, 20, 40, 10, 10, 20,1]
-                        }
-                    ]
-                };
-
-                // 为echarts对象加载数据 
-                myChart.setOption(option);
+    var myChart = echarts.init(document.getElementById('main'));
+    myChart.setOption({
+        tooltip: {
+            trigger: 'axis',
+            show: true
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
             }
-    );
+        },
+        legend: {
+            data:['最近一周加氢量统计']
+        },
+        xAxis : [{
+            type : 'category',
+            data : dates
+        }],
+        yAxis : [{
+            type : 'value',
+            axisLabel: {
+                formatter: '{value} L'
+            },
+        }],
+        series : [{
+            "name":"加氢量",
+            "type":"bar",
+            "data":[]
+        }]
+    });
+
+    $.ajax({
+        url:'../json/data.json',
+        type:'POST',
+        'success':function(data){
+            console.log(data);
+            console.log(myChart);
+            myChart.setOption({
+                series: [{
+                    // 根据名字对应到相应的系列
+                    name: '加氢量',
+                    data: data.data
+                }]
+            });
+        },
+        'error':{}
+    })
+
+
 
     function GetDateStr(AddDayCount){
         var dd = new Date();
