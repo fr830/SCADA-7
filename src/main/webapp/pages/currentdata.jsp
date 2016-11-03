@@ -274,7 +274,7 @@
             splitLine: {
                 show: false
             },
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日','周日','周日','周日']
+            data: []
         },
         yAxis: {
             type: 'value',
@@ -299,8 +299,22 @@
             data.push(Math.random()*10);
         }
         console.log(data);
+        var date=new Date();
+        var s1=date.getMinutes()+":"+date.getSeconds();
+        var s2=date.getMinutes()+":"+date.getSeconds();
+        var s3=date.getMinutes()+":"+date.getSeconds();
+        var s4=date.getMinutes()+":"+date.getSeconds();
+        var s5=date.getMinutes()+":"+date.getSeconds();
+        var s6=date.getMinutes()+":"+date.getSeconds();
+        var s7=date.getMinutes()+":"+date.getSeconds();
+        var s8=date.getMinutes()+":"+date.getSeconds();
+        var s9=date.getMinutes()+":"+date.getSeconds();
+        var s10=date.getMinutes()+":"+date.getSeconds();
 
         myChart.setOption({
+            xAxis:{
+                data:[s1,s2,s3,s4,s5,s6,s7,s8,s9,s10]
+            },
             series: [{
                 data: data
             }]
