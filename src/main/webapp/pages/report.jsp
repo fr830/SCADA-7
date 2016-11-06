@@ -16,7 +16,9 @@
         .col-md-4 {
             width: 30%;
         }
-
+        body{
+            font:10px/2em "宋体",Arial,Times;
+        }
         #paging div {
             float: left;
             line-height: 82px;
@@ -103,10 +105,10 @@
             color: #337ab7;
             border: 1px solid #337ab7;
         }
-
-        #datatable td, th {
+        #datatable td {
             white-space: nowrap
         }
+
 
     </style>
 </head>
@@ -179,15 +181,26 @@
                             '<table class="table table-hover table-condensed table-bordered table-striped">' +
                             '<thead>' +
                             '<tr>' +
-                            '<th>序号</th>' +
-                            '<th>水冷系统温度（°C）</th>' +
-                            '<th>压缩机A压力1（Bar）</th>' +
-                            '<th>压缩机A压力2（Bar）</th>' +
-                            '<th>压缩机B压力1（Bar）</th>' +
-                            '<th>压缩机B压力2（Bar）</th>' +
-                            '<th>A总量（KG）</th>' +
-                            '<th>B总量（KG）</th>' +
+                            /*'<th>序号</th>' +*/
                             '<th>时间</th>' +
+                            '<th>入口压力(MPa)</th>' +
+                            '<th>A出口压力(MPa)</th>' +
+                            '<th>B出口压力(MPa)</th>' +
+                            '<th>储气罐压力A(MPa)</th>' +
+                            '<th>储气罐压力B(MPa)</th>' +
+                            '<th>回水温度(°C)</th>' +
+                            '<th>A出口温度(°C)</th>' +
+                            '<th>B出口温度(°C)</th>' +
+                            '<th>A总量(KG)</th>' +
+                            '<th>B总量(KG)</th>' +
+
+                            '<th>气体压力A(MPa)</th>' +
+                            '<th>气体压力B(MPa)</th>' +
+                            '<th>气体温度A(°C)</th>' +
+                            '<th>气体温度B(°C)</th>' +
+
+
+
                             '</tr>' +
                             '</thead>' +
                             '<tbody>' +
@@ -199,15 +212,28 @@
                     for (var i = 0; i < dataArray.length; i++) {
                         $("#datatable tbody").append(
                                 '<tr>' +
-                                '<td>' + (i + 1) + '</td>' +
-                                '<td>' + dataArray[i].HE109_T + '</td>' +
+                                /*'<td>' + (i + 1) + '</td>' +*/
+                                '<td>' + dataArray[i].UPTIME + '</td>' +
+                                '<td>' + dataArray[i].COMPRESSOR_P + '</td>' +
                                 '<td>' + dataArray[i].CP10A_P + '</td>' +
-                                '<td>' + dataArray[i].T852_P + '</td>' +
                                 '<td>' + dataArray[i].CP10B_P + '</td>' +
+                                '<td>' + dataArray[i].T852_P + '</td>' +
                                 '<td>' + dataArray[i].T853_P + '</td>' +
+
+                                '<td>' + dataArray[i].HE109_T + '</td>' +
+                                '<td>' + dataArray[i].CP10A_T + '</td>' +
+                                '<td>' + dataArray[i].CP10B_T + '</td>' +
+
                                 '<td>' + dataArray[i].AI29 + '</td>' +
                                 '<td>' + dataArray[i].AI30 + '</td>' +
-                                '<td>' + dataArray[i].UPTIME + '</td>' +
+
+                                '<td>' + dataArray[i].AI015 + '</td>' +
+                                '<td>' + dataArray[i].AI016 + '</td>' +
+                                '<td>' + dataArray[i].AI013 + '</td>' +
+                                '<td>' + dataArray[i].AI014 + '</td>' +
+
+
+
                                 '</tr>');
                     }
                     ;
