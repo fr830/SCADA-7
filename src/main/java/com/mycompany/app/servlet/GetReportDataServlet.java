@@ -97,7 +97,7 @@ public class GetReportDataServlet extends HttpServlet {
             while (resultSet.next()){
                 pageCount=resultSet.getInt("COUNT(*)");
             }
-            stringBuilder.append("\"pageCount\":"+pageCount+",\"data\":[");
+            stringBuilder.append("\"pageCount\":"+(int)Math.ceil(pageCount/10d)+",\"data\":[");
             resultSet=statement.executeQuery(selectSql);
             while (resultSet.next()){
                 stringBuilder.append("{");
@@ -117,4 +117,6 @@ public class GetReportDataServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+
+
 }
