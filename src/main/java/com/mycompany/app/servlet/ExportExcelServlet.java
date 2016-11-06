@@ -28,20 +28,32 @@ import java.util.Map;
 public class ExportExcelServlet extends HttpServlet {
     static Map<Integer,String> map=new HashMap<Integer,String>();
     static  String[] excelTitle={
-            "水冷系统温度（°C）","压缩机A压力1（Bar）",
-            "压缩机A压力2（Bar）","压缩机B压力1（Bar）",
-            "压缩机B压力2（Bar）","A总量（KG）",
-            "B总量（KG）","时间"
+            "时间",
+            "入口压力(MPa)","A出口压力(MPa)",
+            "B出口压力(MPa)","储气罐压力A(MPa)",
+            "储气罐压力B(MPa)","回水温度(°C)",
+            "A出口温度(°C)","B出口温度(°C)",
+            "A总量(KG)","B总量(KG)",
+            "气体压力A(MPa)","气体压力B(MPa)",
+            "气体温度A(°C)","气体温度B(°C)"
     };
     static {
-        map.put(0,"HE109_T");
-        map.put(1,"CP10A_P");
-        map.put(2,"T852_P");
+        map.put(0,"UPTIME");
+        map.put(1,"COMPRESSOR_P");
+        map.put(2,"CP10A_P");
         map.put(3,"CP10B_P");
-        map.put(4,"T853_P");
-        map.put(5,"AI29");
-        map.put(6,"AI30");
-        map.put(7,"UPTIME");
+        map.put(4,"T852_P");
+        map.put(5,"T853_P");
+        map.put(6,"HE109_T");
+        map.put(7,"CP10A_T");
+        map.put(8,"CP10B_T");
+        map.put(9,"AI29");
+        map.put(10,"AI30");
+        map.put(11,"AI015");
+        map.put(12,"AI016");
+        map.put(13,"AI013");
+        map.put(14,"AI014");
+
     }
 
 
@@ -49,11 +61,14 @@ public class ExportExcelServlet extends HttpServlet {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         sheet.autoSizeColumn(0);
+        //sheet.setColumnWidth((short) 0, (short) (35.7));
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         Font font=workbook.createFont();
         font.setFontName("宋体");
-        font.setFontHeightInPoints((short) 14);
+       // font.setFontHeightInPoints((short) 14);
         cellStyle.setFont(font);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         try {
             HSSFRow row0 = sheet.createRow(0);
             HSSFCell cell0;
@@ -66,7 +81,7 @@ public class ExportExcelServlet extends HttpServlet {
             HSSFRow row;
             while (resultSet.next()){
                 row= sheet.createRow(i);
-                for (int j = 0; j <8 ; j++) {
+                for (int j = 0; j <map.size() ; j++) {
                     HSSFCell cell=row.createCell(j);
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     cell.setCellValue(resultSet.getString(map.get(j)));
