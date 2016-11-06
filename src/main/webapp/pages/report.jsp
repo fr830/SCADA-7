@@ -387,7 +387,7 @@
     $("#exportExcel").click(function () {
         var start_date = $("#start_date").val();
         var end_date = $("#end_date").val();
-        window.open("http://localhost:8080/SCADA/ExportExcelServlet?start_date="+start_date+"&end_date="+end_date);
+        window.open("../ExportExcelServlet?start_date="+start_date+"&end_date="+end_date);
     });
 
 </script>

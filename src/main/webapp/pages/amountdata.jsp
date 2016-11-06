@@ -101,25 +101,25 @@
             <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
-                    <span class="title">安亭站</span>
+                    <span class="title">大连站</span>
                     <!--<span class=""></span>-->
                 </a>
             </li>
             <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
-                    <span class="title">安亭站</span>
+                    <span class="title">其余站点</span>
                     <!--<span class=""></span>-->
                 </a>
             </li>
-            <li class="start">
+            <!--<li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
-                    <span class="title">安亭站</span>
+                    <span class="title">其余站点</span>
                     <!--<span class=""></span>-->
                 </a>
             </li>
-            <!--<li class="last">
+            <li class="last">
                 <a href="charts.html">
                     <i class="icon-bar-chart"></i>
                     <span class="title">图表信息</span>
