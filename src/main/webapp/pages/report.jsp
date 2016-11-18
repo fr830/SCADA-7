@@ -125,6 +125,12 @@
             <label class="control-label" for="end_date">结束时间：</label>
             <input type="text" class="form-control" id="end_date"/>
         </div>
+        <div  class="form-group">
+            <select class="btn btn-default" id="searchType">
+                <option value="minute" selected="selected">按分钟</option>
+                <option value="hour">按小时</option>
+            </select>
+        </div>
         <div>
             <button type="submit" class="btn btn-default" id="exportExcel">导出报表</button>
             <button type="submit" class="btn btn-default" id="formsubmit">查询</button>
@@ -156,6 +162,7 @@
     function getData(num) {
         var start_date = $("#start_date").val();
         var end_date = $("#end_date").val();
+        var searchType = $("#searchType").val();
         if (typeof num == 'undefined') {
             num = 1;
         }
@@ -168,7 +175,8 @@
             data: {
                 'currentPage': num,
                 'start_date': start_date,
-                'end_date': end_date
+                'end_date': end_date,
+                'searchType':searchType
             },
             'success': function (data) {
                 var jsonData = jQuery.parseJSON(data);
@@ -387,7 +395,8 @@
     $("#exportExcel").click(function () {
         var start_date = $("#start_date").val();
         var end_date = $("#end_date").val();
-        window.open("../ExportExcelServlet?start_date="+start_date+"&end_date="+end_date);
+        var searchType = $("#searchType").val();
+        window.open("../ExportExcelServlet?start_date="+start_date+"&end_date="+end_date+"&searchType="+searchType);
     });
 
 </script>
