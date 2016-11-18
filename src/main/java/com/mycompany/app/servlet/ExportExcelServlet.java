@@ -57,7 +57,7 @@ public class ExportExcelServlet extends HttpServlet {
     }
 
 
-    public void produceExcel(HttpServletRequest request, HttpServletResponse response, int pageCount, ResultSet resultSet) {
+    public void produceExcel(HttpServletRequest request, HttpServletResponse response, ResultSet resultSet) {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         sheet.autoSizeColumn(0);
@@ -138,11 +138,14 @@ public class ExportExcelServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String currentPage = request.getParameter("currentPage");
         String start_date = request.getParameter("start_date");
         String end_date = request.getParameter("end_date");
-        StringBuilder stringBuilder = new StringBuilder("{\"success\": true,");
+        String searchType=request.getParameter("searchType");
         int pageCount = 0;
+        String searchTypeClause="";
+        if ("hour".equals(searchType)){
+            searchTypeClause=" AND SUBSTR(UPTIME,15,2)='00' ";
+        }
         String selectSql = "select ROUND(ATD_102,3) AS ATD_102," +
                 "ROUND(ATD_101,3) AS ATD_101," +
                 "COMPRESSOR_P," +
@@ -168,19 +171,19 @@ public class ExportExcelServlet extends HttpServlet {
                 "AI028, " +
                 "ROUND(ATD_106,3) AS ATD_106," +
                 "AI01, " +
-                "AI020,SUBSTR(UPTIME,1) AS UPTIME  FROM TBL_DATA_ANTING WHERE SUBSTR(UPTIME,1,10) BETWEEN '" + start_date + "' AND '" + end_date + "'";
-        String countSql = "SELECT COUNT(*)  FROM TBL_DATA_ANTING WHERE SUBSTR(UPTIME,1,10) BETWEEN '" + start_date + "' AND '" + end_date + "'";
+                "AI020,SUBSTR(UPTIME,1) AS UPTIME  FROM TBL_DATA_ANTING_HOUR WHERE SUBSTR(UPTIME,1,10) BETWEEN '" + start_date + "' AND '" + end_date + "'"+searchTypeClause;
+        //String countSql = "SELECT COUNT(*)  FROM TBL_DATA_ANTING WHERE SUBSTR(UPTIME,1,10) BETWEEN '" + start_date + "' AND '" + end_date + "'";
         Connection connection = DataBaseUtils.getConnection(this.getServletContext());
         Statement statement = null;
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
-            resultSet = statement.executeQuery(countSql);
+            /*resultSet = statement.executeQuery(countSql);
             while (resultSet.next()) {
                 pageCount = resultSet.getInt("COUNT(*)");
-            }
+            }*/
             resultSet = statement.executeQuery(selectSql);
-            produceExcel(request, response, pageCount, resultSet);
+            produceExcel(request, response,  resultSet);
             resultSet.close();
             statement.close();
             connection.close();

@@ -58,9 +58,13 @@ public class GetReportDataServlet extends HttpServlet {
         String currentPage=request.getParameter("currentPage");
         String start_date=request.getParameter("start_date");
         String end_date=request.getParameter("end_date");
+        String searchType=request.getParameter("searchType");
         StringBuilder stringBuilder=new StringBuilder("{\"success\": true,");
         int pageCount=0;
-        String dataString="";
+        String searchTypeClause="";
+        if ("hour".equals(searchType)){
+            searchTypeClause=" AND SUBSTR(UPTIME,15,2)='00' ";
+        }
         String selectSql="select ROUND(ATD_102,3) AS ATD_102," +
                 "ROUND(ATD_101,3) AS ATD_101," +
                 "COMPRESSOR_P," +
@@ -86,8 +90,8 @@ public class GetReportDataServlet extends HttpServlet {
                 "AI028, " +
                 "ROUND(ATD_106,3) AS ATD_106," +
                 "AI01, " +
-                "AI020,SUBSTR(UPTIME,1) AS UPTIME  FROM TBL_DATA_ANTING WHERE SUBSTR(UPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"' LIMIT "+(Integer.parseInt(currentPage)-1)*10+",10";
-        String countSql="SELECT COUNT(*)  FROM TBL_DATA_ANTING WHERE SUBSTR(UPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'";
+                "AI020,SUBSTR(UPTIME,1) AS UPTIME  FROM TBL_DATA_ANTING_HOUR WHERE SUBSTR(UPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause+" LIMIT "+(Integer.parseInt(currentPage)-1)*10+",10";
+        String countSql="SELECT COUNT(*)  FROM TBL_DATA_ANTING_HOUR WHERE SUBSTR(UPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause;
         Connection connection= DataBaseUtils.getConnection(this.getServletContext());
         Statement statement= null;
         ResultSet resultSet=null;
