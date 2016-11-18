@@ -88,7 +88,7 @@
                             数据监控</a>
                     </li>
                     <li>
-                        <a href="report.jsp">
+                        <a href="report.jsp" target="_blank">
                             报表查看</a>
                     </li>
                     <li>
