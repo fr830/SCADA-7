@@ -221,7 +221,7 @@
                         $("#datatable tbody").append(
                                 '<tr>' +
                                 /*'<td>' + (i + 1) + '</td>' +*/
-                                '<td>' + dataArray[i].UPTIME + '</td>' +
+                                '<td>' + dataArray[i].SHARPTIME + '</td>' +
                                 '<td>' + dataArray[i].COMPRESSOR_P + '</td>' +
                                 '<td>' + dataArray[i].CP10A_P + '</td>' +
                                 '<td>' + dataArray[i].CP10B_P + '</td>' +
