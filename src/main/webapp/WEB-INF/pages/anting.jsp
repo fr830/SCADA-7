@@ -84,7 +84,7 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="anting.jsp">
+                        <a href="show/anting">
                             数据监控</a>
                     </li>
                     <li>
