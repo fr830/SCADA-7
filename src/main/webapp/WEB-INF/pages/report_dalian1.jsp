@@ -169,7 +169,7 @@
         $("#datatable").remove();
         var jqXHR = $.ajax({
             async: false,
-            url: '../GetReportDataServlet',
+            url: 'GetReportDataServlet_Dalian1',
             datatype: 'json',
             type: "post",
             data: {
@@ -191,24 +191,41 @@
                             '<tr>' +
                             /*'<th>序号</th>' +*/
                             '<th>时间</th>' +
-                            '<th>入口压力(MPa)</th>' +
-                            '<th>A出口压力(MPa)</th>' +
-                            '<th>B出口压力(MPa)</th>' +
-                            '<th>储气罐压力A(MPa)</th>' +
-                            '<th>储气罐压力B(MPa)</th>' +
-                            '<th>回水温度(°C)</th>' +
-                            '<th>A出口温度(°C)</th>' +
-                            '<th>B出口温度(°C)</th>' +
-                            '<th>A总量(KG)</th>' +
-                            '<th>B总量(KG)</th>' +
+                            '<th>加氢机加气质量</th>' +
+                            '<th>加氢机环境温度(°C)</th>' +
+                            '<th>加氢机瞬时压力(MPa)</th>' +
+                            '<th>加氢机瞬时流量</th>' +
+                            '<th>加氢机氢气总价</th>' +
+                            '<th>加氢机累计加气质量(KG)</th>' +
+                            '<th>加氢机终了压力(MPa)</th>' +
+                            '<th>加氢机气瓶内初始压力(MPa)</th>' +
+                            '<th>加氢机目标压力(MPa)</th>' +
+                            '<th>加氢机状态指示</th>' +
+                            '<th>发送加氢机指令</th>' +
+                            '<th>加氢机累计加氢量(KG)</th>' +
+                            '<th>加氢机瞬时压力(BAR)</th>' +
+                            '<th>加氢机终了压力(BAR)</th>' +
+                            '<th>加氢机气瓶内初始压力(BAR)</th>' +
+                            '<th>加氢机目标压力(BAR)</th>' +
 
-                            '<th>气体压力A(MPa)</th>' +
-                            '<th>气体压力B(MPa)</th>' +
-                            '<th>气体温度A(°C)</th>' +
-                            '<th>气体温度B(°C)</th>' +
+                            '<th>发送给压缩机指令字</th>' +
+                            '<th>压缩机进气压力(BAR)</th>' +
+                            '<th>压缩机排气压力(BAR)</th>' +
+                            '<th>排气温度450(°C)</th>' +
+                            '<th>润滑油温度450(°C)</th>' +
 
 
-
+                            '<th>压缩机进气压力450(BAR)</th>' +
+                            '<th>压缩机排气压450(BAR)</th>' +
+                            '<th>备用1</th>' +
+                            '<th>备用2</th>' +
+                            '<th>备用3</th>' +
+                            '<th>压缩机进气压力900(BAR)</th>' +
+                            '<th>压缩机排气压力900(BAR)</th>' +
+                            '<th>排气温度900(°C)</th>' +
+                            '<th>润滑油温度900(°C)</th>' +
+                            '<th>压缩机进气压力900(BAR)</th>' +
+                            '<th>压缩机排气压力900(BAR)</th>' +
                             '</tr>' +
                             '</thead>' +
                             '<tbody>' +
@@ -222,26 +239,41 @@
                                 '<tr>' +
                                 /*'<td>' + (i + 1) + '</td>' +*/
                                 '<td>' + dataArray[i].SHARPTIME + '</td>' +
-                                '<td>' + dataArray[i].COMPRESSOR_P + '</td>' +
-                                '<td>' + dataArray[i].CP10A_P + '</td>' +
-                                '<td>' + dataArray[i].CP10B_P + '</td>' +
-                                '<td>' + dataArray[i].T852_P + '</td>' +
-                                '<td>' + dataArray[i].T853_P + '</td>' +
+                                '<td>' + dataArray[i].MH2 + '</td>' +
+                                '<td>' + dataArray[i].AT + '</td>' +
+                                '<td>' + dataArray[i].Pinst_MPa + '</td>' +
+                                '<td>' + dataArray[i].Linst + '</td>' +
+                                '<td>' + dataArray[i].COSTH2 + '</td>' +
 
-                                '<td>' + dataArray[i].HE109_T + '</td>' +
-                                '<td>' + dataArray[i].CP10A_T + '</td>' +
-                                '<td>' + dataArray[i].CP10B_T + '</td>' +
+                                '<td>' + dataArray[i].AMH2 + '</td>' +
+                                '<td>' + dataArray[i].Pend_MPa + '</td>' +
+                                '<td>' + dataArray[i].P0_MPa + '</td>' +
 
-                                '<td>' + dataArray[i].AI29 + '</td>' +
-                                '<td>' + dataArray[i].AI30 + '</td>' +
+                                '<td>' + dataArray[i].Ptarget_MPa + '</td>' +
+                                '<td>' + dataArray[i].Sjqj35 + '</td>' +
 
-                                '<td>' + dataArray[i].AI015 + '</td>' +
-                                '<td>' + dataArray[i].AI016 + '</td>' +
-                                '<td>' + dataArray[i].AI013 + '</td>' +
-                                '<td>' + dataArray[i].AI014 + '</td>' +
-
-
-
+                                '<td>' + dataArray[i].WRITEdispenssor + '</td>' +
+                                '<td>' + dataArray[i].AMH2_Calculation35 + '</td>' +
+                                '<td>' + dataArray[i].Pinst_bar + '</td>' +
+                                '<td>' + dataArray[i].Pend_bar + '</td>' +
+                                '<td>' + dataArray[i].P0_bar + '</td>' +
+                                '<td>' + dataArray[i].Ptarget_bar + '</td>' +
+                                '<td>' + dataArray[i].WRITEcompenssor + '</td>' +
+                                '<td>' + dataArray[i].Pin450 + '</td>' +
+                                '<td>' + dataArray[i].Pout450 + '</td>' +
+                                '<td>' + dataArray[i].Tout450 + '</td>' +
+                                '<td>' + dataArray[i].Toil450 + '</td>' +
+                                '<td>' + dataArray[i].Pin450_bar + '</td>' +
+                                '<td>' + dataArray[i].Pout450_bar + '</td>' +
+                                '<td>' + dataArray[i].BY11 + '</td>' +
+                                '<td>' + dataArray[i].BY12 + '</td>' +
+                                '<td>' + dataArray[i].BY13 + '</td>' +
+                                '<td>' + dataArray[i].Pin900 + '</td>' +
+                                '<td>' + dataArray[i].Pout900 + '</td>' +
+                                '<td>' + dataArray[i].Tout900 + '</td>' +
+                                '<td>' + dataArray[i].Toil900 + '</td>' +
+                                '<td>' + dataArray[i].Pin900_bar + '</td>' +
+                                '<td>' + dataArray[i].Pout900_bar + '</td>' +
                                 '</tr>');
                     }
                     ;
@@ -396,7 +428,7 @@
         var start_date = $("#start_date").val();
         var end_date = $("#end_date").val();
         var searchType = $("#searchType").val();
-        window.open("../ExportExcelServlet?start_date="+start_date+"&end_date="+end_date+"&searchType="+searchType);
+        window.open("ExportExcelServlet_Dalian1?start_date="+start_date+"&end_date="+end_date+"&searchType="+searchType);
     });
 
 </script>

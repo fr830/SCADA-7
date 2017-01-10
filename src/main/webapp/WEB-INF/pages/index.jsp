@@ -84,20 +84,16 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="anting.jsp">
+                        <a href="anting">
                             数据监控</a>
                     </li>
                     <li>
-                        <a href="report.jsp">
+                        <a href="report" target="_blank">
                             报表查看</a>
                     </li>
                     <li>
-                        <a href="amountdata.jsp">
+                        <a href="amountdata">
                             加氢量统计</a>
-                    </li>
-                    <li>
-                        <a href="currentdata.jsp">
-                            实时数据趋势图</a>
                     </li>
                 </ul>
             </li>
@@ -221,7 +217,7 @@
 <script>
     function showData() {
         $.ajax({
-            url: '../GetDataServlet',
+            url: '../GetDataServlet_Anting',
             type: 'POST',
             'success': function (data) {
                 var dataJson = jQuery.parseJSON(data);

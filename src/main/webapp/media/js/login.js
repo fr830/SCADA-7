@@ -22,10 +22,10 @@ var Login = function () {
 
 	            messages: {
 	                username: {
-	                    required: "Username is required."
+	                    required: "请输入用户名"
 	                },
 	                password: {
-	                    required: "Password is required."
+	                    required: "请输入密码"
 	                }
 	            },
 
@@ -48,7 +48,18 @@ var Login = function () {
 	            },
 
 	            submitHandler: function (form) {
-	                window.location.href = "index.jsp";
+	            	var name=$("#username");
+	            	var password=$("#username");
+	                //window.location.href = "index.jsp";
+					$.ajax({
+						url:'/LoginServlet',
+						data:{
+							name:name,
+							password:password
+						},
+						success:function(data){},
+						error:function(){}
+					})
 	            }
 	        });
 

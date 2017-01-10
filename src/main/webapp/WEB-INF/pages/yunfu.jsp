@@ -122,7 +122,7 @@
                 <a href="index.jsp">
                     <i class="icon-home"></i>
                     <span class="title">大连站2</span>
-                    <span class="arrow"></span>
+                    <span class=""></span>
                 </a>
                 <ul class="sub-menu">
                     <li>
@@ -143,7 +143,7 @@
                 <a href="index.jsp">
                     <i class="icon-home"></i>
                     <span class="title">云浮站</span>
-                    <span class="arrow"></span>
+                    <span class=""></span>
                 </a>
                 <ul class="sub-menu">
                     <li>

@@ -85,7 +85,7 @@
 <script src="media/js/jquery.uniform.min.js" type="text/javascript" ></script>
 <script src="media/js/jquery.validate.min.js" type="text/javascript"></script>
 <script src="media/js/app.js" type="text/javascript"></script>
-<%--<script src="media/js/login.js" type="text/javascript"></script>--%>
+<script src="media/js/login.js" type="text/javascript"></script>
 <script>
     jQuery(document).ready(function() {
         App.init();

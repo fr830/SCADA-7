@@ -37,7 +37,6 @@
 <!-- END HEAD -->
 <!-- BEGIN BODY -->
 <body class="page-header-fixed">
-
 <!-- BEGIN HEADER -->
 <div class="header navbar navbar-inverse navbar-fixed-top">
     <!-- BEGIN TOP NAVIGATION BAR -->
@@ -85,15 +84,15 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="anting.jsp">
+                        <a href="anting">
                             数据监控</a>
                     </li>
                     <li>
-                        <a href="report.jsp">
+                        <a href="report_anting" target="_blank">
                             报表查看</a>
                     </li>
                     <li>
-                        <a href="amountdata.jsp">
+                        <a href="amount_data_anting">
                             加氢量统计</a>
                     </li>
                 </ul>
@@ -101,22 +100,72 @@
             <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
-                    <span class="title">大连站</span>
-                    <!--<span class=""></span>-->
+                    <span class="title">大连站1</span>
+                    <span class="arrow"></span>
                 </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="dalian1">
+                            数据监控</a>
+                    </li>
+                    <li>
+                        <a href="report_dalian1" target="_blank">
+                            报表查看</a>
+                    </li>
+                    <li>
+                        <a href="amount_data_dalian1">
+                            加氢量统计</a>
+                    </li>
+                </ul>
             </li>
             <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
-                    <span class="title">其余站点</span>
-                    <!--<span class=""></span>-->
+                    <span class="title">大连站2</span>
+                    <span class=""></span>
                 </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="dalian2">
+                            数据监控</a>
+                    </li>
+                    <li>
+                        <a href="report_dalian2" target="_blank">
+                            报表查看</a>
+                    </li>
+                    <li>
+                        <a href="amount_data_dalian2">
+                            加氢量统计</a>
+                    </li>
+                </ul>
             </li>
-            <!--<li class="start">
+            <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
-                    <span class="title">其余站点</span>
-                    <!--<span class=""></span>-->
+                    <span class="title">云浮站</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="yunfu">
+                            数据监控</a>
+                    </li>
+                    <li>
+                        <a href="report_yunfu" target="_blank">
+                            报表查看</a>
+                    </li>
+                    <li>
+                        <a href="amount_data_yunfu">
+                            加氢量统计</a>
+                    </li>
+                </ul>
+            </li>
+            <!--
+            <li class="start">
+                <a href="index.jsp">
+                    <i class="icon-home"></i>
+                    <span class="title">安亭站</span>
+                    <!--<span class=""></span>
                 </a>
             </li>
             <li class="last">
@@ -193,9 +242,8 @@
             </div>
             <div class="clearfix"></div>
             <div class="row-fluid">
-                <div id="main" style="height:400px"></div>
-                <div id="main1" style="height:400px"></div>
-                <div id="main3" style="height:400px"></div>
+                <img src="media/image/station.png" id="station_img">
+                <canvas id="mycanvas">Your browser does not support the HTML5 canvas tag.</canvas>
             </div>
         </div>
     </div>
@@ -215,208 +263,58 @@
 <script src="media/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
 <script src="media/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="media/js/app.js" type="text/javascript"></script>
-<script src="jslib/js/echarts.min.js"></script>
-<script type="text/javascript">
-    var date7 = GetDateStr(-7);
-    var date6 = GetDateStr(-6);
-    var date5 = GetDateStr(-5);
-    var date4 = GetDateStr(-4);
-    var date3 = GetDateStr(-3);
-    var date2 = GetDateStr(-2);
-    var date1 = GetDateStr(-1);
-    var dates = [date7, date6, date5, date4, date3, date2, date1];
-    var months = ["1月份", "2月份", "3月份", "4月份", "5月份", "6月份", "7月份", "8月份", "9月份", "10月份"];
-
-    var myChart = echarts.init(document.getElementById('main'));
-    myChart.setOption({
-        tooltip: {
-            trigger: 'axis',
-            show: true
-        },
-        toolbox: {
-            feature: {
-                dataView: {show: true, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
-            }
-        },
-        legend: {
-            data: ['最近一周A总量',"最近一周B总量"]
-        },
-        xAxis: [{
-            type: 'category',
-            data: dates
-        }],
-        yAxis: [{
-            type: 'value',
-            axisLabel: {
-                formatter: '{value} L'
+<script>
+    function showData() {
+        $.ajax({
+            url: 'GetDataServlet_Anting',
+            type: 'POST',
+            'success': function (data) {
+                var dataJson = jQuery.parseJSON(data);
+                var dataArray = dataJson.data;
+                var canvas = document.getElementById("mycanvas");
+                var img = document.getElementById("station_img");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                var context = canvas.getContext("2d");
+                context.scale(0.71, 0.71);
+                context.drawImage(img, 0, 0);
+                context.font = "23px Microsoft YaHei";
+                context.fillText(dataArray["ATD_102"] + "%", 300, 40);
+                context.fillText(dataArray["ATD_101"] + "%", 300, 100);
+                context.fillText(dataArray["COMPRESSOR_P"] + " Bar", 530, 90);
+                context.fillText(dataArray["CP10A_P"] + " Bar", 710, 150);
+                context.fillText(dataArray["CP10A_T"] + " ℃", 780, 240);
+                context.fillText(dataArray["T852_P"] + " Bar", 880, 240);
+                context.fillText(dataArray["T853_P"] + " Bar", 880, 430);
+                context.fillText(dataArray["CP10B_T"] + " ℃", 800, 430);
+                context.fillText(dataArray["CP10B_P"] + " Bar", 720, 435);
+                context.fillText(dataArray["ATD_105"] + "% ", 710, 510);
+                context.fillText(dataArray["ATD_103"] + "% ", 1090, 90);
+                context.fillText(dataArray["HE109_T"] + "℃", 100, 270);
+                context.fillText(dataArray["AI014"] + "℃", 980, 480);
+                context.fillText(dataArray["AI016"] + "MPa", 1050, 480);
+                context.fillText(dataArray["AI011"] + "KG/MIN ", 1140, 480);
+                context.fillText(dataArray["AI013"] + "℃", 970, 580);
+                context.fillText(dataArray["AI015"] + "MPa", 1040, 580);
+                context.fillText(dataArray["AI05"] + "KG/MIN ", 1130, 620);
+                $("#station_img").css('display', 'none');
             },
-        }],
-        series: [{
-            name: "最近一周A总量",
-            type: "bar",
-            data: []
-        },{
-            name: "最近一周B总量",
-            type: "bar",
-            data: []
-        }]
-    });
+            'error': function (data) {
 
-    $.ajax({
-        url: '../json/data.json',
-        type: 'POST',
-        'success': function (data) {
-            console.log(data);
-            console.log(myChart);
-            myChart.setOption({
-                series: [{
-                    // 根据名字对应到相应的系列
-                    name: '最近一周A总量',
-                    data: data.data
-                },{
-                        // 根据名字对应到相应的系列
-                        name: '最近一周B总量',
-                        data: data.data
-                }]
-            });
-        },
-        'error': {}
-    })
-
-
-    var myChart1 = echarts.init(document.getElementById('main1'));
-    myChart1.setOption({
-        tooltip: {
-            trigger: 'axis',
-            show: true
-        },
-        toolbox: {
-            feature: {
-                dataView: {show: true, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
             }
-        },
-        legend: {
-            data: ['A总量月统计',"B总量月统计"]
-        },
-        xAxis: [{
-            type: 'category',
-            data: months
-        }],
-        yAxis: [{
-            type: 'value',
-            axisLabel: {
-                formatter: '{value} L'
-            },
-        }],
-        series: [{
-            name: "A总量月统计",
-            type: "bar",
-            data: []
-        },{
-            name: "B总量月统计",
-            type: "bar",
-            data: []
-        }]
-    });
-
-    $.ajax({
-        url: '../json/data1.json',
-        type: 'POST',
-        'success': function (data) {
-            console.log(data);
-            console.log(myChart);
-            myChart1.setOption({
-                series: [{
-                    // 根据名字对应到相应的系列
-                    name: 'A总量月统计',
-                    data: data.data
-                },{
-                // 根据名字对应到相应的系列
-                name: 'B总量月统计',
-                        data: data.data
-            }]
-            });
-        },
-        'error': {}
-    })
+        });
 
 
-    function GetDateStr(AddDayCount) {
-        var dd = new Date();
-        dd.setDate(dd.getDate() + AddDayCount);//获取AddDayCount天后的日期
-        var y = dd.getFullYear();
-        var m = (dd.getMonth() + 1) < 10 ? "0" + (dd.getMonth() + 1) : (dd.getMonth() + 1);//获取当前月份的日期，不足10补0
-        var d = dd.getDate() < 10 ? "0" + dd.getDate() : dd.getDate(); //获取当前几号，不足10补0
-        return y + "-" + m + "-" + d;
     }
 
-
-    var myChart3=echarts.init(document.getElementById("main3"));
-    myChart3.setOption({
-        title: {
-            text: '各个月份占比',
-            subtext: '',
-            x: 'center'
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            left: 'left',
-            data: months
-        },
-        series: [
-            {
-                name: '月份',
-                type: 'pie',
-                radius: '55%',
-                center: ['50%', '60%'],
-                data: [
-                ],
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }
-        ]
-    });
-
-
-    $.ajax({
-        url: '../json/data2.json',
-        type: 'POST',
-        'success': function (data) {
-            console.log(data);
-            console.log(myChart);
-            myChart3.setOption({
-                series: [{
-                    // 根据名字对应到相应的系列
-                    name: '月份',
-                    data: data.data
-                }]
-            });
-        },
-        'error': {}
-    })
-   /* if (option && typeof option === "object") {
-        myChart.setOption(option, true);
-    }*/
     jQuery(document).ready(function () {
+        showData();
         App.init(); // initlayout and core plugins
     });
-
-
+    var i = 0
+    setInterval(function () {
+        showData();
+    }, 5000)
 </script>
 </body>
 </html>
