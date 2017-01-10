@@ -1,4 +1,4 @@
-package com.mycompany.app.servlet;
+package com.mycompany.app.servlet.dalian1;
 
 import com.mycompany.app.utils.DataBaseUtils;
 import org.apache.poi.hssf.usermodel.*;
@@ -24,8 +24,8 @@ import java.util.Map;
 /**
  * Created by siege on 2016-06-20.
  */
-@WebServlet("/ExportExcelServlet")
-public class ExportExcelServlet extends HttpServlet {
+@WebServlet("/ExportExcelServlet_Dalian1")
+public class ExportExcelServlet_Dalian1 extends HttpServlet {
     static Map<Integer,String> map=new HashMap<Integer,String>();
     static  String[] excelTitle={
             "时间",

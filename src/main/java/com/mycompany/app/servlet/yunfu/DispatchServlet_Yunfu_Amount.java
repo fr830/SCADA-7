@@ -1,4 +1,4 @@
-package com.mycompany.app.servlet;
+package com.mycompany.app.servlet.yunfu;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,12 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
 /**
- * Created by siege on 2016-06-20.
+ * Created by siege on 2016-11-21.
  */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/amount_data_yunfu")
+public class DispatchServlet_Yunfu_Amount extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -22,11 +21,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name=request.getParameter("username");
-        String password=request.getParameter("password");
-        if ("atjqz".equals(name)&&"000000".equals(password)) {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("WEB-INF/pages/anting.jsp");
-            requestDispatcher.forward(request, response);
-        }
+        RequestDispatcher requestDispatcher=request.getRequestDispatcher("WEB-INF/pages/amount_data_yunfu.jsp");
+        requestDispatcher.forward(request,response);
     }
 }

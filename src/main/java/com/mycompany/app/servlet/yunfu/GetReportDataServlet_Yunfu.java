@@ -1,4 +1,4 @@
-package com.mycompany.app.servlet;
+package com.mycompany.app.servlet.yunfu;
 
 
 
@@ -18,35 +18,36 @@ import java.sql.Statement;
 /**
  * Created by siege on 2016-06-19.
  */
-@WebServlet("/GetReportDataServlet")
-public class GetReportDataServlet extends HttpServlet {
+@WebServlet("/GetReportDataServlet_Yunfu")
+public class GetReportDataServlet_Yunfu extends HttpServlet {
     private final static String [] stringArr={
-            "HE109_T",
-            "CP10A_T",
-            "CP10B_T",
-            "AI014",
-            "AI013",
-            "COMPRESSOR_P",
-            "CP10A_P",
-            "CP10B_P",
-            "T852_P",
-            "T853_P",
-            "AI016",
-            "AI015",
-            "ATD_102",
-            "ATD_101",
-            "ATD_104",
-            "ATD_105",
-            "ATD_103",
-            "ATD_106",
-            "AI011",
-            "AI05",
-            "AI29",
-            "AI30",
-            "AI08",
-            "AI028",
-            "AI01",
-            "AI020",
+            "MH2_A",
+            "AT_A",
+            "Plinest_A",
+            "Llinest_A",
+            "PRISE_A",
+            "ALLMH2_A",
+            "Pend_A",
+            "P0_A",
+            "Ptarget_A",
+            "MH2_B",
+            "AT_B",
+            "Plinest_B",
+            "Llinest_B",
+            "PRISE_B",
+            "ALLMH2_B",
+            "Pend_B",
+            "P0_B",
+            "Ptarget_B",
+            "Pout_H2_1_1",
+            "Pin_H2_1_1",
+            "Tout_H2_1_1",
+            "Pout_H2_2_1",
+            "Pin_H2_2_1",
+            "Tout_H2_2_1",
+            "P_H_tank_2_1",
+            "P_M_TANK_2_1",
+            "P_L_TANK_2_1",
             "SHARPTIME"
     };
 
@@ -65,33 +66,35 @@ public class GetReportDataServlet extends HttpServlet {
         if ("hour".equals(searchType)){
             searchTypeClause=" AND SUBSTR(SHARPTIME,15,2)='00' ";
         }
-        String selectSql="select ROUND(ATD_102,3) AS ATD_102," +
-                "ROUND(ATD_101,3) AS ATD_101," +
-                "COMPRESSOR_P," +
-                "HE109_T, " +
-                "CP10A_P, " +
-                "ATD_104, " +
-                "CP10B_P, " +
-                "ROUND(ATD_105,3) AS ATD_105," +
-                "CP10A_T, " +
-                "CP10B_T, " +
-                "T852_P, " +
-                "T853_P, " +
-                "ROUND(ATD_103,3) AS ATD_103, " +
-                "AI016, " +
-                "AI014, " +
-                "AI013, " +
-                "AI011, " +
-                "ROUND(AI015,3) AS AI015, " +
-                "ROUND(AI05,3) AS AI05, " +
-                "AI29, " +
-                "AI30, " +
-                "AI08, " +
-                "AI028, " +
-                "ROUND(ATD_106,3) AS ATD_106," +
-                "AI01, " +
-                "AI020,SUBSTR(SHARPTIME,1) AS SHARPTIME  FROM TBL_DATA_ANTING_HOUR WHERE SUBSTR(SHARPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause+" LIMIT "+(Integer.parseInt(currentPage)-1)*10+",10";
-        String countSql="SELECT COUNT(*)  FROM TBL_DATA_ANTING_HOUR WHERE SUBSTR(SHARPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause;
+        String selectSql="select MH2_A," +
+                "AT_A," +
+                "Plinest_A," +
+                "Llinest_A, " +
+                "PRISE_A, " +
+                "ALLMH2_A, " +
+                "Pend_A, " +
+                "P0_A," +
+                "Ptarget_A, " +
+                "MH2_B, " +
+                "AT_B, " +
+                "Plinest_B, " +
+                "Llinest_B, " +
+                "PRISE_B, " +
+                "ALLMH2_B, " +
+                "Pend_B, " +
+                "P0_B, " +
+                "Ptarget_B, " +
+                "Pout_H2_1_1, " +
+                "Pin_H2_1_1, " +
+                "Tout_H2_1_1, " +
+                "Pout_H2_2_1, " +
+                "Pin_H2_2_1, " +
+                "Tout_H2_2_1," +
+                "P_H_tank_2_1, " +
+                "P_M_TANK_2_1, " +
+                "P_L_TANK_2_1, " +
+                "SUBSTR(SHARPTIME,1) AS SHARPTIME  FROM TBL_DATA_YUNFU_HOUR WHERE SUBSTR(SHARPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause+" LIMIT "+(Integer.parseInt(currentPage)-1)*10+",10";
+        String countSql="SELECT COUNT(*)  FROM TBL_DATA_YUNFU_HOUR WHERE SUBSTR(SHARPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause;
         Connection connection= DataBaseUtils.getConnection(this.getServletContext());
         Statement statement= null;
         ResultSet resultSet=null;

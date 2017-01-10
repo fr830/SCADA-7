@@ -1,4 +1,4 @@
-package com.mycompany.app.servlet;
+package com.mycompany.app.servlet.yunfu;
 
 
 
@@ -19,8 +19,8 @@ import java.sql.Statement;
  * Created by siege on 2015-12-07.
  */
 
-@WebServlet("/GetDataServlet")
-public class GetDataServlet extends HttpServlet {
+@WebServlet("/GetDataServlet_Yunfu")
+public class GetDataServlet_Yunfu extends HttpServlet {
     private final static String [] stringArr={
             "HE109_T",
             "CP10A_T",
@@ -57,32 +57,34 @@ public class GetDataServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         StringBuilder stringBuilder=new StringBuilder("{\"success\": true,\"data\":{");
         String dataString="";
-        String sql="select ROUND(ATD_102,3) AS ATD_102," +
-                "ROUND(ATD_101,3) AS ATD_101," +
-                "COMPRESSOR_P," +
-                "HE109_T, " +
-                "CP10A_P, " +
-                "ATD_104, " +
-                "CP10B_P, " +
-                "ROUND(ATD_105,3) AS ATD_105," +
-                "CP10A_T, " +
-                "CP10B_T, " +
-                "T852_P, " +
-                "T853_P, " +
-                "ROUND(ATD_103,3) AS ATD_103, " +
-                "AI016, " +
-                "AI014, " +
-                "AI013, " +
-                "AI011, " +
-                "ROUND(AI015,3) AS AI015, " +
-                "ROUND(AI05,3) AS AI05, " +
-                "AI29, " +
-                "AI30, " +
-                "AI08, " +
-                "AI028, " +
-                "ROUND(ATD_106,3) AS ATD_106," +
-                "AI01, " +
-                "AI020,UPTIME  from tbl_data_anting WHERE UPTIME=(SELECT MAX( UPTIME ) FROM TBL_DATA_ANTING)  ";
+        String sql="select MH2_A," +
+                "AT_A," +
+                "Plinest_A," +
+                "Llinest_A, " +
+                "PRISE_A, " +
+                "ALLMH2_A, " +
+                "Pend_A, " +
+                "P0_A," +
+                "Ptarget_A, " +
+                "MH2_B, " +
+                "AT_B, " +
+                "Plinest_B, " +
+                "Llinest_B, " +
+                "PRISE_B, " +
+                "ALLMH2_B, " +
+                "Pend_B, " +
+                "P0_B, " +
+                "Ptarget_B, " +
+                "Pout_H2_1_1, " +
+                "Pin_H2_1_1, " +
+                "Tout_H2_1_1, " +
+                "Pout_H2_2_1, " +
+                "Pin_H2_2_1, " +
+                "Tout_H2_2_1," +
+                "P_H_tank_2_1, " +
+                "P_M_TANK_2_1, " +
+                "P_L_TANK_2_1, " +
+                "UPTIME  from tbl_data_yunfu WHERE UPTIME=(SELECT MAX( UPTIME ) FROM TBL_DATA_ANTING)  ";
         Connection connection= DataBaseUtils.getConnection(this.getServletContext());
         Statement statement= null;
         ResultSet resultSet=null;
