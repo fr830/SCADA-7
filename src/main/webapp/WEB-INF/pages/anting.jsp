@@ -91,10 +91,10 @@
                         <a href="report_anting" target="_blank">
                             报表查看</a>
                     </li>
-                    <li>
+                    <%--<li>
                         <a href="amount_data_anting">
                             加氢量统计</a>
-                    </li>
+                    </li>--%>
                 </ul>
             </li>
             <li class="start">
@@ -112,13 +112,13 @@
                         <a href="report_dalian1" target="_blank">
                             报表查看</a>
                     </li>
-                    <li>
+                   <%-- <li>
                         <a href="amount_data_dalian1">
                             加氢量统计</a>
-                    </li>
+                    </li>--%>
                 </ul>
             </li>
-            <li class="start">
+           <%-- <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
                     <span class="title">大连站2</span>
@@ -138,7 +138,7 @@
                             加氢量统计</a>
                     </li>
                 </ul>
-            </li>
+            </li>--%>
             <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
@@ -154,10 +154,10 @@
                         <a href="report_yunfu" target="_blank">
                             报表查看</a>
                     </li>
-                    <li>
+                   <%-- <li>
                         <a href="amount_data_yunfu">
                             加氢量统计</a>
-                    </li>
+                    </li>--%>
                 </ul>
             </li>
             <!--

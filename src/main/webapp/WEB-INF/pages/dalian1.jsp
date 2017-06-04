@@ -91,10 +91,10 @@
                         <a href="report_anting" target="_blank">
                             报表查看</a>
                     </li>
-                    <li>
+                   <%-- <li>
                         <a href="amount_data_anting">
                             加氢量统计</a>
-                    </li>
+                    </li>--%>
                 </ul>
             </li>
             <li class="start">
@@ -112,13 +112,13 @@
                         <a href="report_dalian1" target="_blank">
                             报表查看</a>
                     </li>
-                    <li>
+                   <%-- <li>
                         <a href="amount_data_dalian1">
                             加氢量统计</a>
-                    </li>
+                    </li>--%>
                 </ul>
             </li>
-            <li class="start">
+            <%--<li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
                     <span class="title">大连站2</span>
@@ -138,7 +138,7 @@
                             加氢量统计</a>
                     </li>
                 </ul>
-            </li>
+            </li>--%>
             <li class="start">
                 <a href="index.jsp">
                     <i class="icon-home"></i>
@@ -154,10 +154,10 @@
                         <a href="report_yunfu" target="_blank">
                             报表查看</a>
                     </li>
-                    <li>
+                   <%-- <li>
                         <a href="amount_data_yunfu">
                             加氢量统计</a>
-                    </li>
+                    </li>--%>
                 </ul>
             </li>
             <!--
@@ -242,7 +242,7 @@
             </div>
             <div class="clearfix"></div>
             <div class="row-fluid">
-                <img src="media/image/station.png" id="station_img">
+                <img src="media/image/station_dalian1.png" id="station_img">
                 <canvas id="mycanvas">Your browser does not support the HTML5 canvas tag.</canvas>
             </div>
         </div>
@@ -266,7 +266,7 @@
 <script>
     function showData() {
         $.ajax({
-            url: 'GetDataServlet_Anting',
+            url: 'GetDataServlet_Dalian1',
             type: 'POST',
             'success': function (data) {
                 var dataJson = jQuery.parseJSON(data);
@@ -279,24 +279,24 @@
                 context.scale(0.71, 0.71);
                 context.drawImage(img, 0, 0);
                 context.font = "23px Microsoft YaHei";
-                context.fillText(dataArray["ATD_102"] + "%", 300, 40);
-                context.fillText(dataArray["ATD_101"] + "%", 300, 100);
-                context.fillText(dataArray["COMPRESSOR_P"] + " Bar", 530, 90);
-                context.fillText(dataArray["CP10A_P"] + " Bar", 710, 150);
-                context.fillText(dataArray["CP10A_T"] + " ℃", 780, 240);
-                context.fillText(dataArray["T852_P"] + " Bar", 880, 240);
-                context.fillText(dataArray["T853_P"] + " Bar", 880, 430);
-                context.fillText(dataArray["CP10B_T"] + " ℃", 800, 430);
-                context.fillText(dataArray["CP10B_P"] + " Bar", 720, 435);
-                context.fillText(dataArray["ATD_105"] + "% ", 710, 510);
-                context.fillText(dataArray["ATD_103"] + "% ", 1090, 90);
-                context.fillText(dataArray["HE109_T"] + "℃", 100, 270);
-                context.fillText(dataArray["AI014"] + "℃", 980, 480);
-                context.fillText(dataArray["AI016"] + "MPa", 1050, 480);
-                context.fillText(dataArray["AI011"] + "KG/MIN ", 1140, 480);
-                context.fillText(dataArray["AI013"] + "℃", 970, 580);
-                context.fillText(dataArray["AI015"] + "MPa", 1040, 580);
-                context.fillText(dataArray["AI05"] + "KG/MIN ", 1130, 620);
+                context.fillText(dataArray["MH2"] + "%", 300, 40);
+                context.fillText(dataArray["AT"] + "%", 300, 100);
+                context.fillText(dataArray["Pinst_MPa"] + " Bar", 530, 90);
+                context.fillText(dataArray["Linst"] + " Bar", 710, 150);
+                context.fillText(dataArray["Ptarget_MPa"] + " ℃", 780, 240);
+                context.fillText(dataArray["Pend_MPa"] + " Bar", 880, 240);
+                context.fillText(dataArray["P0_MPa"] + " Bar", 880, 430);
+                context.fillText(dataArray["AMH2_Calculation35"] + " ℃", 800, 430);
+                context.fillText(dataArray["Pend_bar"] + " Bar", 720, 435);
+                context.fillText(dataArray["Ptarget_bar"] + "% ", 710, 510);
+                context.fillText(dataArray["WRITEcompenssor"] + "% ", 1090, 90);
+                context.fillText(dataArray["Pin450"] + "℃", 100, 270);
+                context.fillText(dataArray["Pout450"] + "℃", 980, 480);
+                context.fillText(dataArray["Tout450"] + "MPa", 1050, 480);
+                context.fillText(dataArray["Toil450"] + "KG/MIN ", 1140, 480);
+                context.fillText(dataArray["Pin450_bar"] + "℃", 970, 580);
+                context.fillText(dataArray["Pout450_bar"] + "MPa", 1040, 580);
+                context.fillText(dataArray["Tout900"] + "KG/MIN ", 1130, 620);
                 $("#station_img").css('display', 'none');
             },
             'error': function (data) {
