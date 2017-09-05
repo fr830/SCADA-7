@@ -90,8 +90,8 @@ public class GetReportDataServlet_Anting extends HttpServlet {
                 "AI028, " +
                 "ROUND(ATD_106,3) AS ATD_106," +
                 "AI01, " +
-                "AI020,SUBSTR(SHARPTIME,1) AS SHARPTIME  FROM TBL_DATA_ANTING_HOUR WHERE SUBSTR(SHARPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause+" LIMIT "+(Integer.parseInt(currentPage)-1)*10+",10";
-        String countSql="SELECT COUNT(*)  FROM TBL_DATA_ANTING_HOUR WHERE SUBSTR(SHARPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause;
+                "AI020,SUBSTR(UPTIME,1) AS SHARPTIME  FROM TBL_DATA_ANTING WHERE SUBSTR(UPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause+" LIMIT "+(Integer.parseInt(currentPage)-1)*10+",10";
+        String countSql="SELECT COUNT(*)  FROM TBL_DATA_ANTING WHERE SUBSTR(UPTIME,1,10) BETWEEN '"+start_date+"' AND '"+end_date+"'"+searchTypeClause;
         Connection connection= DataBaseUtils.getConnection(this.getServletContext());
         Statement statement= null;
         ResultSet resultSet=null;

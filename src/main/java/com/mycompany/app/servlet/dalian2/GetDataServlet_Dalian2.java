@@ -55,7 +55,14 @@ public class GetDataServlet_Dalian2 extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        StringBuilder stringBuilder=new StringBuilder("{\"success\": true,\"data\":{");
+        String callBack=request.getParameter("callback");
+        StringBuilder stringBuilder;
+        if (callBack!=null&&!"".equals(callBack)){
+            stringBuilder=new StringBuilder(callBack+"({\"success\": true,\"data\":{");
+        }else {
+            stringBuilder=new StringBuilder("{\"success\": true,\"data\":{");
+        }
+        //StringBuilder stringBuilder=new StringBuilder("{\"success\": true,\"data\":{");
         String dataString="";
         String sql="select ROUND(ATD_102,3) AS ATD_102," +
                 "ROUND(ATD_101,3) AS ATD_101," +
@@ -95,6 +102,9 @@ public class GetDataServlet_Dalian2 extends HttpServlet {
                 }
                 dataString=stringBuilder.substring(0,stringBuilder.length()-1)+"}}";
                 break;
+            }
+            if (callBack!=null&&!"".equals(callBack)){
+                dataString =dataString+")";
             }
             response.setContentType("text/html;charset=UTF-8");
             response.getOutputStream().write(dataString.getBytes("UTF-8"));

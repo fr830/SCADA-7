@@ -281,22 +281,22 @@
                 context.font = "23px Microsoft YaHei";
                 //context.fillText(dataArray["Pout_H2_1_1"] + "%", 300, 40);//
                // context.fillText(dataArray["ATD_101"] + "%", 300, 100);
-                context.fillText(dataArray["Pin_H2_1_1"] + " Bar", 330, 90);
-                context.fillText(dataArray["Pin_H2_2_1"] + " Bar", 350, 370);
-                context.fillText(dataArray["Pout_H2_1_1"] + " Bar", 680, 150);//
-                context.fillText(dataArray["Tout_H2_1_1"] + " ℃", 770, 150);//
-                context.fillText(dataArray["P_H_tank_2_1"] + " Bar", 880, 200);//
-                context.fillText(dataArray["P_L_TANK_2_1"] + " Bar", 880, 380);//
-                context.fillText(dataArray["Tout_H2_2_1"] + " ℃", 760, 440);//
-                context.fillText(dataArray["Pout_H2_2_1"] + " Bar", 660, 440);//
+                context.fillText(dataArray["Pin_H2_1_1"] + " Bar", 320, 40);
+                context.fillText(dataArray["Pin_H2_2_1"] + " Bar", 315, 350);
+                context.fillText(dataArray["Pout_H2_1_1"] + " Bar", 590, 90);//
+                context.fillText(dataArray["Tout_H2_1_1"] + " ℃", 680, 90);//
+                context.fillText(dataArray["P_H_tank_2_1"] + " Bar", 800, 90);//
+                context.fillText(dataArray["P_L_TANK_2_1"] + " Bar", 820, 300);//
+                context.fillText(dataArray["Tout_H2_2_1"] + " ℃", 690, 300);//
+                context.fillText(dataArray["Pout_H2_2_1"] + " Bar", 590, 300);//
               //  context.fillText(dataArray["ATD_105"] + "% ", 710, 510);
                 //context.fillText(dataArray["ATD_103"] + "% ", 1090, 90);
-                context.fillText(dataArray["AT_A"] + "℃", 940, 480);//
-                context.fillText(dataArray["Plinest_A"] + "MPa", 1020, 480);//
-                context.fillText(dataArray["Llinest_A"] + "KG/MIN ", 1120, 480);//
-                context.fillText(dataArray["AT_B"] + "℃", 940, 580);//
-                context.fillText(dataArray["Plinest_B"] + "MPa", 1010, 580);//
-                context.fillText(dataArray["Llinest_B"] + "KG/MIN ", 1130, 620);//
+                context.fillText(dataArray["AT_A"] + "℃", 690, 470);//
+                context.fillText(dataArray["Plinest_A"] + "MPa", 600, 470);//
+                context.fillText(dataArray["Llinest_A"] + "KG/MIN ", 770, 470);//
+                context.fillText(dataArray["AT_B"] + "℃", 690, 680);//
+                context.fillText(dataArray["Plinest_B"] + "MPa", 580, 680);//
+                context.fillText(dataArray["Llinest_B"] + "KG/MIN ", 770, 680);//
                 $("#station_img").css('display', 'none');
             },
             'error': function (data) {

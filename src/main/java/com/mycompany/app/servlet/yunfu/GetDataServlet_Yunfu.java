@@ -22,32 +22,36 @@ import java.sql.Statement;
 @WebServlet("/GetDataServlet_Yunfu")
 public class GetDataServlet_Yunfu extends HttpServlet {
     private final static String [] stringArr={
-            "HE109_T",
-            "CP10A_T",
-            "CP10B_T",
-            "AI014",
-            "AI013",
-            "COMPRESSOR_P",
-            "CP10A_P",
-            "CP10B_P",
-            "T852_P",
-            "T853_P",
-            "AI016",
-            "AI015",
-            "ATD_102",
-            "ATD_101",
-            "ATD_104",
-            "ATD_105",
-            "ATD_103",
-            "ATD_106",
-            "AI011",
-            "AI05",
-            "AI29",
-            "AI30",
-            "AI08",
-            "AI028",
-            "AI01",
-            "AI020"
+
+            "MH2_A",
+            "AT_A",
+            "Plinest_A",
+            "Llinest_A",
+            "PRISE_A",
+            "ALLMH2_A",
+            "Pend_A",
+            "P0_A",
+            "Ptarget_A",
+            "MH2_B",
+            "AT_B",
+            "Plinest_B",
+            "Llinest_B",
+            "PRISE_B",
+            "ALLMH2_B",
+            "Pend_B",
+            "P0_B",
+            "Ptarget_B",
+            "Pout_H2_1_1",
+            "Pin_H2_1_1",
+            "Tout_H2_1_1",
+            "Pout_H2_2_1",
+            "Pin_H2_2_1",
+            "Tout_H2_2_1",
+            "P_H_tank_2_1",
+            "P_M_TANK_2_1",
+            "P_L_TANK_2_1"
+
+
     };
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -55,7 +59,14 @@ public class GetDataServlet_Yunfu extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        StringBuilder stringBuilder=new StringBuilder("{\"success\": true,\"data\":{");
+        String callBack=request.getParameter("callback");
+        StringBuilder stringBuilder;
+        if (callBack!=null&&!"".equals(callBack)){
+            stringBuilder=new StringBuilder(callBack+"({\"success\": true,\"data\":{");
+        }else {
+            stringBuilder=new StringBuilder("{\"success\": true,\"data\":{");
+        }
+       // StringBuilder stringBuilder=new StringBuilder("{\"success\": true,\"data\":{");
         String dataString="";
         String sql="select MH2_A," +
                 "AT_A," +
@@ -84,7 +95,7 @@ public class GetDataServlet_Yunfu extends HttpServlet {
                 "P_H_tank_2_1, " +
                 "P_M_TANK_2_1, " +
                 "P_L_TANK_2_1, " +
-                "UPTIME  from tbl_data_yunfu WHERE UPTIME=(SELECT MAX( UPTIME ) FROM TBL_DATA_ANTING)  ";
+                "UPTIME  from tbl_data_yunfu WHERE UPTIME=(SELECT MAX( UPTIME ) FROM tbl_data_yunfu)  ";
         Connection connection= DataBaseUtils.getConnection(this.getServletContext());
         Statement statement= null;
         ResultSet resultSet=null;
@@ -97,6 +108,9 @@ public class GetDataServlet_Yunfu extends HttpServlet {
                 }
                 dataString=stringBuilder.substring(0,stringBuilder.length()-1)+"}}";
                 break;
+            }
+            if (callBack!=null&&!"".equals(callBack)){
+                dataString =dataString+")";
             }
             response.setContentType("text/html;charset=UTF-8");
             response.getOutputStream().write(dataString.getBytes("UTF-8"));

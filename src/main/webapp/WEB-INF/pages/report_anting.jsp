@@ -179,6 +179,7 @@
                 'searchType':searchType
             },
             'success': function (data) {
+                console.log(data);
                 var jsonData = jQuery.parseJSON(data);
                 var dataArray = jsonData.data;
                 var pageCount = jsonData.pageCount;

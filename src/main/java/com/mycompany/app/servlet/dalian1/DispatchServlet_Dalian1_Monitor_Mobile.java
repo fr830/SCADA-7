@@ -11,8 +11,8 @@ import java.io.IOException;
 /**c
  * Created by siege on 2016-11-21.
  */
-@WebServlet("/dalian1")
-public class DispatchServlet_Dalian1_Monitor extends HttpServlet {
+@WebServlet("/dalian1_mobile")
+public class DispatchServlet_Dalian1_Monitor_Mobile extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,7 +21,7 @@ public class DispatchServlet_Dalian1_Monitor extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher=request.getRequestDispatcher("WEB-INF/pages/dalian1.jsp");
+        RequestDispatcher requestDispatcher=request.getRequestDispatcher("WEB-INF/pages/dalian1_mobile.jsp");
         requestDispatcher.forward(request,response);
     }
 }

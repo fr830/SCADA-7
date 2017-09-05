@@ -1,4 +1,4 @@
-package com.mycompany.app.servlet.dalian1;
+package com.mycompany.app.servlet.yunfu;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**c
+/**
  * Created by siege on 2016-11-21.
  */
-@WebServlet("/dalian1")
-public class DispatchServlet_Dalian1_Monitor extends HttpServlet {
+@WebServlet("/yunfu_mobile")
+public class DispatchServlet_Yunfu_Monitor_Mobile extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,7 +21,7 @@ public class DispatchServlet_Dalian1_Monitor extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher=request.getRequestDispatcher("WEB-INF/pages/dalian1.jsp");
+        RequestDispatcher requestDispatcher=request.getRequestDispatcher("WEB-INF/pages/yunfu_mobile.jsp");
         requestDispatcher.forward(request,response);
     }
 }
